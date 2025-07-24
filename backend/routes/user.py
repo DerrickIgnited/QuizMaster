@@ -23,10 +23,7 @@ def dashboard():
     c = conn.cursor()
     
     # Get available quizzes
-    c.execute('''SELECT q.*, c.name as chapter_name, s.name as subject_name 
-                 FROM quizzes q 
-                 JOIN chapters c ON q.chapter_id = c.id 
-                 JOIN subjects s ON c.subject_id = s.id''')
+    c.execute('SELECT * FROM quizzes')
     quizzes = c.fetchall()
     
     # Get user scores
@@ -40,12 +37,16 @@ def dashboard():
     conn.close()
     
     return jsonify({
-        'quizzes': [{'id': q[0], 'chapter_id': q[1], 'date_of_quiz': q[2],
-                    'time_duration': q[3], 'remarks': q[4],
-                    'chapter_name': q[5], 'subject_name': q[6]} for q in quizzes],
-        'scores': [{'id': s[0], 'quiz_id': s[1], 'user_id': s[2],
-                   'timestamp': s[3], 'total_scored': s[4],
-                   'quiz_name': s[5], 'chapter_name': s[6]} for s in scores]
+        'quizzes': [
+            {'id': q[0], 'chapter_id': q[1], 'date_of_quiz': q[2], 'time_duration': q[3], 'remarks': q[4]}
+            for q in quizzes
+        ],
+        'scores': [
+            {'id': s[0], 'quiz_id': s[1], 'user_id': s[2],
+             'timestamp': s[3], 'total_scored': s[4],
+             'quiz_name': s[5], 'chapter_name': s[6]}
+            for s in scores
+        ]
     })
 
 @user_bp.route('/profile', methods=['GET'])

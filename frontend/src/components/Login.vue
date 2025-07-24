@@ -67,3 +67,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #ccc;
+  opacity: 1;
+}
+</style>

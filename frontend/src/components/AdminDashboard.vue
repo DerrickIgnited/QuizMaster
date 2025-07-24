@@ -1,15 +1,5 @@
 <template>
   <div class="container-fluid">
-      <nav class="navbar navbar-expand-lg navbar-dark mb-4">
-        <div class="container">
-          <a class="navbar-brand fw-bold">
-            <i class="fas fa-crown me-2"></i>Admin Dashboard
-          </a>
-          <button @click="logout" class="btn btn-outline-light">
-            <i class="fas fa-sign-out-alt me-2"></i>Logout
-          </button>
-        </div>
-      </nav>
       
       <div class="container">
         <div class="row">
@@ -122,7 +112,7 @@
                   <td>{{quiz.time_duration}} min</td>
                   <td>
                     <button @click="manageQuestions(quiz.id)" class="btn btn-sm btn-primary me-2">
-                      <i class="fas fa-question me-1"></i>Questions
+                      Questions
                     </button>
                     <button @click="deleteQuiz(quiz.id)" class="btn btn-sm btn-danger">
                       <i class="fas fa-trash me-1"></i>Delete
@@ -397,3 +387,11 @@ export default {
   }
 };
 </script>
+<style scoped>
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #ccc;
+  opacity: 1;
+}
+</style>

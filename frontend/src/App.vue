@@ -1,5 +1,18 @@
 <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/frontend/src/App.vue -->
 <template>
+  <Starfield />
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand fw-bold">
+      <i class="fas fa-crown me-2"></i> Quiz Master
+    </a>
+    <div class="ms-auto">
+      <button @click="logout" class="btn btn-outline-light">
+        <i class="fas fa-sign-out-alt me-2"></i>Logout
+      </button>
+    </div>
+  </nav>
+
   <Login v-if="currentView === 'login'"
          @login-success="handleLoginSuccess"
          @switch-to-register="handleSwitchToRegister" />
@@ -22,9 +35,12 @@ import Register from './components/Register.vue';
 import AdminDashboard from './components/AdminDashboard.vue';
 import UserDashboard from './components/UserDashboard.vue';
 import QuizAttempt from './components/QuizAttempt.vue';
+import Starfield from './components/Starfield.vue';
 
+const API_BASE = 'http://localhost:8001';
 export default {
   components: {
+    Starfield,
     Login,
     Register,
     AdminDashboard,
@@ -61,6 +77,13 @@ export default {
     handleBackToDashboard() {
       this.currentView = this.currentUser.role === 'admin' ? 'admin' : 'user';
       this.selectedQuizId = null;
+    },
+    logout() {
+      fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' })
+        .then(() => {
+        this.handleLogout();
+      })
+      .catch(err => console.error('Logout failed:', err));
     }
   }
 };

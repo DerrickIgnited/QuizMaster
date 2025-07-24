@@ -1,4 +1,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
-createApp(App).mount('#app');
+import Particles from 'vue3-particles'
+
+createApp(App)
+  .use(Particles)
+  .mount('#app');

@@ -1,16 +1,6 @@
 <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/frontend/src/components/UserDashboard.vue -->
 <template>
   <div class="container-fluid">
-      <nav class="navbar navbar-expand-lg navbar-dark mb-4">
-        <div class="container">
-          <a class="navbar-brand fw-bold">
-            <i class="fas fa-user-graduate me-2"></i>Welcome, {{user.full_name}}
-          </a>
-          <button @click="logout" class="btn btn-outline-light">
-            <i class="fas fa-sign-out-alt me-2"></i>Logout
-          </button>
-        </div>
-      </nav>
       
       <div class="container">
         <div class="row">
