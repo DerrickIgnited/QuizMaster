@@ -21,7 +21,14 @@
             <input v-model="user.password" type="password" class="form-control bg-transparent border-white text-white" placeholder="Password" required>
           </div>
           <div class="col-md-6 mb-3">
-            <input v-model="user.qualification" type="text" class="form-control bg-transparent border-white text-white" placeholder="Qualification">
+            <select v-model="user.qualification" class="form-control bg-transparent border-white text-white" required>
+              <option value="">Select Qualification</option>
+              <option value="Pre-school">Pre-school</option>
+              <option value="School">School</option>
+              <option value="College">College</option>
+              <option value="University">University</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
         </div>
         <div class="mb-4">
@@ -70,3 +77,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #ccc;
+  opacity: 1;
+}
+</style>
