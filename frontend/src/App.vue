@@ -3,7 +3,7 @@
   <Starfield />
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand fw-bold">
+    <a class="navbar-brand fw-bold" href="#" @click.prevent="currentView = 'home'">
       <i class="fas fa-crown me-2"></i> Quiz Master
     </a>
     <div class="ms-auto">
@@ -33,6 +33,9 @@
   <QuizAttempt v-else-if="currentView === 'quiz'"
                :quiz-id="selectedQuizId"
                @back-to-dashboard="handleBackToDashboard" />
+  <Home v-else-if="currentView === 'home'"
+        @switch-to-login="handleSwitchToLogin"
+        @switch-to-register="handleSwitchToRegister" />
 </template>
 
 <script>
@@ -42,11 +45,13 @@ import AdminDashboard from './components/AdminDashboard.vue';
 import UserDashboard from './components/UserDashboard.vue';
 import QuizAttempt from './components/QuizAttempt.vue';
 import Starfield from './components/Starfield.vue';
+import Home from './components/Home.vue';
 
 const API_BASE = 'http://localhost:8001';
 export default {
   components: {
     Starfield,
+    Home,
     Login,
     Register,
     AdminDashboard,
@@ -55,7 +60,7 @@ export default {
   },
   data() {
     return {
-      currentView: 'login',
+      currentView: 'home',
       currentUser: null,
       selectedQuizId: null
     };
@@ -67,7 +72,7 @@ export default {
     },
     handleLogout() {
       this.currentUser = null;
-      this.currentView = 'login';
+      this.currentView = 'home';
       this.selectedQuizId = null;
     },
     handleSwitchToRegister() {
