@@ -7,9 +7,14 @@ import json
 from celery import Celery
 from datetime import datetime, timedelta
 import os
+from dotenv import load_dotenv
+from flask import Flask
+from flask_cors import CORS
+
+load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
-app.secret_key = 'quiz_master_secret_key_2024'
+app.secret_key = os.environ.get('SECRET_KEY') or 'quiz_master_secret_key_2024'
 CORS(app, supports_credentials=True)
 
 # Redis setup
@@ -98,10 +103,14 @@ from routes.admin import admin_bp
 from routes.user import user_bp
 from routes.quiz import quiz_bp
 
+# Import chatbot blueprint
+from routes.chatbot import chatbot_bp
+
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(user_bp, url_prefix='/api/user')
 app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
+app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
 
 if __name__ == '__main__':
     init_db()

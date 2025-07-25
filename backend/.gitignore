@@ -2,3 +2,4 @@ __pycache__
 celerybeat*
 models
 database_tester.py
+.env

@@ -39,6 +39,8 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
           @switch-to-register="handleSwitchToRegister" />
   </div>
 
+  <Chatbot v-if="currentView !== 'quiz'" />
+
   <footer class="app-footer glass-footer py-4 px-3 bg-dark">
     <div class="container d-flex flex-column justify-content-center align-items-center text-center">
       <div class="mb-3 mb-md-0 text-white">
@@ -57,6 +59,7 @@ import UserDashboard from './components/UserDashboard.vue';
 import QuizAttempt from './components/QuizAttempt.vue';
 import Starfield from './components/Starfield.vue';
 import Home from './components/Home.vue';
+import Chatbot from './components/Chatbot.vue';
 
 const API_BASE = 'http://localhost:8001';
 export default {
@@ -67,7 +70,8 @@ export default {
     Register,
     AdminDashboard,
     UserDashboard,
-    QuizAttempt
+    QuizAttempt,
+    Chatbot
   },
   data() {
     return {
