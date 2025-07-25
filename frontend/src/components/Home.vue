@@ -86,10 +86,12 @@
             <h4 class="text-white mb-3">Ready to challenge your brain?</h4>
             <button @click="$emit('switch-to-login')" class="btn modern-btn me-2"><i class="fas fa-sign-in-alt me-2"></i>Login</button>
             <button @click="$emit('switch-to-register')" class="btn modern-btn me-2"><i class="fas fa-user-plus me-2"></i>Register</button>
+            <button @click="$emit('switch-to-about-us')" class="btn modern-btn me-2">About Us</button>
+            <button @click="$emit('switch-to-contact-us')" class="btn modern-btn me-2">Contact Us</button>
           </div>
         </div>
       </div>
-
+      
       <!-- Modals -->
       <Login v-if="showLogin" @close="showLogin = false" @login-success="onLoginSuccess"/>
       <Register v-if="showRegister" @close="showRegister = false" @register-success="onRegisterSuccess"/>
@@ -145,7 +147,6 @@ export default {
     };
   },
   mounted() {
-    // Dynamically load the spline-viewer script
     const script = document.createElement('script');
     script.type = 'module';
     script.src = 'https://unpkg.com/@splinetool/viewer@1.10.37/build/spline-viewer.js';

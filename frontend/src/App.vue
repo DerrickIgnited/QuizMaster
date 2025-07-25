@@ -36,7 +36,11 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
                  @back-to-dashboard="handleBackToDashboard" />
     <Home v-else-if="currentView === 'home'"
           @switch-to-login="handleSwitchToLogin"
-          @switch-to-register="handleSwitchToRegister" />
+          @switch-to-register="handleSwitchToRegister"
+          @switch-to-about-us="handleSwitchToAboutus"
+          @switch-to-contact-us="handleSwitchToContactus" />
+    <AboutUs v-else-if="currentView === 'aboutus'" />
+    <ContactUs v-else-if="currentView === 'contactus'" />
   </div>
 
   <Chatbot v-if="currentView !== 'quiz'" />
@@ -49,6 +53,7 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
       </div>
     </div>
   </footer>
+
 </template>
 
 <script>
@@ -60,6 +65,8 @@ import QuizAttempt from './components/QuizAttempt.vue';
 import Starfield from './components/Starfield.vue';
 import Home from './components/Home.vue';
 import Chatbot from './components/Chatbot.vue';
+import AboutUs from './components/AboutUs.vue';
+import ContactUs from './components/ContactUs.vue';
 
 const API_BASE = 'http://localhost:8001';
 export default {
@@ -71,7 +78,9 @@ export default {
     AdminDashboard,
     UserDashboard,
     QuizAttempt,
-    Chatbot
+    Chatbot,
+    AboutUs,
+    ContactUs
   },
   data() {
     return {
@@ -110,6 +119,12 @@ export default {
         this.handleLogout();
       })
       .catch(err => console.error('Logout failed:', err));
+    },
+    handleSwitchToAboutus() {
+      this.currentView = 'aboutus';
+    },
+    handleSwitchToContactus() {
+      this.currentView = 'contactus';
     }
   }
 };
