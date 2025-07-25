@@ -25,6 +25,13 @@
         </div>
       </div>
 
+      <!-- Spline Viewer -->
+      <div class="row justify-content-center mb-4" style="background-color: transparent;">
+        <div class="col-md-10" style="background-color: transparent;">
+          <spline-viewer url="https://prod.spline.design/ihdvwQnt9PRkVtLl/scene.splinecode" style="width: 100%; height: 500px;"></spline-viewer>
+        </div>
+      </div>
+
       <!-- Why Choose Quiz Master -->
       <div class="row justify-content-center mb-4">
         <div class="col-md-10">
@@ -136,6 +143,13 @@ export default {
         { text: 'We use it for our college quiz competitions!', author: 'Shruti, VIT Chennai' }
       ]
     };
+  },
+  mounted() {
+    // Dynamically load the spline-viewer script
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = 'https://unpkg.com/@splinetool/viewer@1.10.37/build/spline-viewer.js';
+    document.head.appendChild(script);
   },
   methods: {
     onLoginSuccess(user) {
