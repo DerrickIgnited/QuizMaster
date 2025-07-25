@@ -1,4 +1,4 @@
-<!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/frontend/src/App.vue -->
+e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/frontend/src/App.vue -->
 <template>
   <Starfield />
 
@@ -36,6 +36,14 @@
   <Home v-else-if="currentView === 'home'"
         @switch-to-login="handleSwitchToLogin"
         @switch-to-register="handleSwitchToRegister" />
+  <footer class="app-footer glass-footer py-4 px-3 bg-dark">
+    <div class="container d-flex flex-column justify-content-center align-items-center text-center">
+      <div class="mb-3 mb-md-0 text-white">
+        <i class="fas fa-graduation-cap me-2 text-primary"></i>
+        <span class="fw-bold">Quiz Master</span> © 2025 — All rights reserved.
+      </div>
+    </div>
+  </footer>
 </template>
 
 <script>
@@ -102,5 +110,26 @@ export default {
 <style scoped>
 nav.navbar {
   margin-bottom: 2rem;
+}
+
+.app-footer {
+  font-size: 1rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1030;
+}
+
+.footer-links a {
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
 }
 </style>
