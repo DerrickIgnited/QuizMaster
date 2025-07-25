@@ -3,6 +3,7 @@ import sqlite3
 import json
 import redis
 from .utils import cache_response
+from tasks import reminders
 
 admin_bp = Blueprint('admin', __name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -188,3 +189,11 @@ def delete_question(question_id):
     conn.commit()
     conn.close()
     return jsonify({'success': True})
+
+@admin_bp.route('/trigger-reminders', methods=['POST'])
+@admin_required
+@cache_response('trigger-reminders', timeout=60)
+def trigger_export():
+
+    reminders.export_user_performance_csv.apply().get()
+    return jsonify({'message': 'Export triggered!'})

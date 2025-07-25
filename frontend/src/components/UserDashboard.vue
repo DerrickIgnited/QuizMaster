@@ -22,6 +22,11 @@
                   </div>
                 </div>
               </div>
+              <div class="col-md-6">
+                <button @click="triggerReminders" class="btn btn-sm modern-btn">
+                  <i class="fas fa-bell me-1"></i>Trigger Exports
+                </button>
+              </div>
             </div>
           </div>
           
@@ -220,6 +225,27 @@ export default defineComponent({
       startQuiz,
       logout
     };
+  },
+  methods: {
+    async triggerReminders() {
+      try {
+        const response = await fetch(`${API_BASE}/api/user/trigger-reminders`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert(data.message || 'Reminders triggered successfully');
+        } else {
+          alert(data.error || 'Failed to trigger reminders');
+        }
+      } catch (error) {
+        alert('Something went wrong while triggering reminders.');
+        console.error(error);
+      }
+    }
   }
 });
 </script>

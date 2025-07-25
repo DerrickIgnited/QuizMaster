@@ -4,6 +4,7 @@ import json
 import redis
 from .utils import cache_response
 from werkzeug.security import check_password_hash, generate_password_hash
+from tasks import reminders
 
 user_bp = Blueprint('user', __name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -184,3 +185,21 @@ def change_password():
     conn.close()
 
     return jsonify({'message': 'Password updated successfully'})
+
+@user_bp.route('/trigger-reminders', methods=['POST'])
+@login_required
+@cache_response('trigger-reminders', timeout=60)
+def trigger_export():
+    user_id = session.get('user_id')
+    conn = sqlite3.connect('quiz_master.db')
+    c = conn.cursor()
+    c.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    row = c.fetchone()
+    conn.close()
+
+    if not row:
+        return jsonify({'error': 'User not found'}), 404
+
+    username = row[0]
+    reminders.export_user_quiz_history_csv.apply(args=[username]).get()
+    return jsonify({'message': 'Export triggered!'})
