@@ -54,7 +54,7 @@ def dashboard():
         {'id': s[0], 'quiz_id': s[1], 'user_id': s[2],
          'timestamp': s[3], 'total_scored': s[4],
          'quiz_name': s[5], 'chapter_name': s[6]}
-        for s in scores[:5]
+        for s in scores[:10]
     ]
     
     return jsonify({

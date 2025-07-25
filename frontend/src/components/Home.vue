@@ -28,7 +28,7 @@
       <!-- Spline Viewer -->
       <div class="row justify-content-center mb-4" style="background-color: transparent;">
         <div class="col-md-10" style="background-color: transparent;">
-          <spline-viewer url="https://prod.spline.design/ihdvwQnt9PRkVtLl/scene.splinecode" style="width: 100%; height: 500px;"></spline-viewer>
+          <spline-viewer url="https://prod.spline.design/9PvjbUlSfD1a59Oj/scene.splinecode" style="width: 100%; height: 500px;"></spline-viewer>
         </div>
       </div>
 
