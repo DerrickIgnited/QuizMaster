@@ -60,19 +60,12 @@ export default {
         renderer.setSize(window.innerWidth, window.innerHeight);
       };
 
-      const handleScroll = () => {
-        scrollSpeed = window.scrollY - (handleScroll.lastScrollY || 0);
-        handleScroll.lastScrollY = window.scrollY;
-      };
-      handleScroll.lastScrollY = window.scrollY;
-
       const handleMouseMove = (event) => {
         mouseX = event.clientX;
         mouseY = event.clientY;
       };
 
       window.addEventListener('resize', handleResize);
-      window.addEventListener('scroll', handleScroll);
       window.addEventListener('mousemove', handleMouseMove);
 
       onBeforeUnmount(() => {
