@@ -135,7 +135,7 @@ nav.navbar {
 }
 
 .navbar-buttons {
-  margin-left: 84%;
+  margin-left: 76%;
 }
 
 .app-footer {
