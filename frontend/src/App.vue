@@ -19,23 +19,26 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
     </div>
   </nav>
 
-  <Login v-if="currentView === 'login'"
-         @login-success="handleLoginSuccess"
-         @switch-to-register="handleSwitchToRegister" />
-  <Register v-else-if="currentView === 'register'"
-            @switch-to-login="handleSwitchToLogin" />
-  <AdminDashboard v-else-if="currentView === 'admin'"
-                  @logout="handleLogout" />
-  <UserDashboard v-else-if="currentView === 'user'"
-                 :user="currentUser"
-                 @logout="handleLogout"
-                 @start-quiz="handleStartQuiz" />
-  <QuizAttempt v-else-if="currentView === 'quiz'"
-               :quiz-id="selectedQuizId"
-               @back-to-dashboard="handleBackToDashboard" />
-  <Home v-else-if="currentView === 'home'"
-        @switch-to-login="handleSwitchToLogin"
-        @switch-to-register="handleSwitchToRegister" />
+  <div class="content-wrapper">
+    <Login v-if="currentView === 'login'"
+           @login-success="handleLoginSuccess"
+           @switch-to-register="handleSwitchToRegister" />
+    <Register v-else-if="currentView === 'register'"
+              @switch-to-login="handleSwitchToLogin" />
+    <AdminDashboard v-else-if="currentView === 'admin'"
+                    @logout="handleLogout" />
+    <UserDashboard v-else-if="currentView === 'user'"
+                   :user="currentUser"
+                   @logout="handleLogout"
+                   @start-quiz="handleStartQuiz" />
+    <QuizAttempt v-else-if="currentView === 'quiz'"
+                 :quiz-id="selectedQuizId"
+                 @back-to-dashboard="handleBackToDashboard" />
+    <Home v-else-if="currentView === 'home'"
+          @switch-to-login="handleSwitchToLogin"
+          @switch-to-register="handleSwitchToRegister" />
+  </div>
+
   <footer class="app-footer glass-footer py-4 px-3 bg-dark">
     <div class="container d-flex flex-column justify-content-center align-items-center text-center">
       <div class="mb-3 mb-md-0 text-white">
@@ -132,4 +135,9 @@ nav.navbar {
 .footer-links a:hover {
   text-decoration: underline;
 }
+
+.content-wrapper {
+  padding-bottom: 80px;
+}
+
 </style>
