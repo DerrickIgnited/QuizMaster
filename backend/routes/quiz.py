@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, session
 import sqlite3
 from datetime import datetime
+from .utils import cache_response
 
 quiz_bp = Blueprint('quiz', __name__)
 
@@ -14,6 +15,7 @@ def login_required(f):
 
 @quiz_bp.route('/attempt/<int:quiz_id>', methods=['GET'])
 @login_required
+@cache_response('quiz_attempt', timeout=60)
 def get_quiz(quiz_id):
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -47,6 +49,7 @@ def get_quiz(quiz_id):
 
 @quiz_bp.route('/submit/<int:quiz_id>', methods=['POST'])
 @login_required
+@cache_response('quiz_submit', timeout=60)
 def submit_quiz(quiz_id):
     user_id = session['user_id']
     answers = request.json.get('answers', {})

@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, request, jsonify, current_app
 import requests
 import logging
+from .utils import cache_response
 
 chatbot_bp = Blueprint('chatbot', __name__)
 
@@ -15,6 +16,7 @@ AI:
     return prompt
 
 @chatbot_bp.route('/chat', methods=['POST'])
+@cache_response('chatbot_chat', timeout=60)
 def chat():
     data = request.json
     user_message = data.get('message', '')

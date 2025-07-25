@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 import sqlite3
 import json
 import redis
+from .utils import cache_response
 
 admin_bp = Blueprint('admin', __name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -16,6 +17,7 @@ def admin_required(f):
 
 @admin_bp.route('/dashboard', methods=['GET'])
 @admin_required
+@cache_response('admin_dashboard', timeout=60)
 def admin_dashboard():
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -46,6 +48,7 @@ def admin_dashboard():
 
 @admin_bp.route('/subjects', methods=['GET', 'POST'])
 @admin_required
+@cache_response('admin_subject', timeout=60)
 def manage_subjects():
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -73,6 +76,7 @@ def manage_subjects():
 
 @admin_bp.route('/chapters', methods=['GET', 'POST'])
 @admin_required
+@cache_response('admin_chapters', timeout=60)
 def manage_chapters():
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -93,6 +97,7 @@ def manage_chapters():
 
 @admin_bp.route('/quizzes', methods=['GET', 'POST'])
 @admin_required
+@cache_response('admin_quizzes', timeout=60)
 def manage_quizzes():
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -117,6 +122,7 @@ def manage_quizzes():
 
 @admin_bp.route('/questions/<int:quiz_id>', methods=['GET', 'POST'])
 @admin_required
+@cache_response('admin_questions', timeout=60)
 def manage_questions(quiz_id):
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -140,6 +146,7 @@ def manage_questions(quiz_id):
 
 @admin_bp.route('/subjects/<int:subject_id>', methods=['DELETE'])
 @admin_required
+@cache_response('admin_subject', timeout=60)
 def delete_subject(subject_id):
     print(subject_id)
     conn = sqlite3.connect('quiz_master.db')
@@ -151,6 +158,7 @@ def delete_subject(subject_id):
 
 @admin_bp.route('/chapters/<int:chapter_id>', methods=['DELETE'])
 @admin_required
+@cache_response('admin_chapters', timeout=60)
 def delete_chapter(chapter_id):
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -161,6 +169,7 @@ def delete_chapter(chapter_id):
 
 @admin_bp.route('/quizzes/<int:quiz_id>', methods=['DELETE'])
 @admin_required
+@cache_response('admin_quizzes', timeout=60)
 def delete_quiz(quiz_id):
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
@@ -171,6 +180,7 @@ def delete_quiz(quiz_id):
 
 @admin_bp.route('/questions/<int:question_id>', methods=['DELETE'])
 @admin_required
+@cache_response('admin_questions', timeout=60)
 def delete_question(question_id):
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
