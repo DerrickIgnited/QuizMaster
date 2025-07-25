@@ -6,7 +6,7 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
     <a class="navbar-brand fw-bold" href="#" @click.prevent="currentView = 'home'">
       <i class="fas fa-graduation-cap me-2"></i> Quiz Master
     </a>
-    <div class="ms-auto">
+    <div class="navbar-buttons">
       <button v-if="currentUser" @click="logout" class="btn modern-btn me-2">
         <i class="fas fa-sign-out-alt me-2"></i>Logout
       </button>
@@ -117,6 +117,10 @@ export default {
 <style scoped>
 nav.navbar {
   margin-bottom: 2rem;
+}
+
+.navbar-buttons {
+  margin-left: 84%;
 }
 
 .app-footer {
