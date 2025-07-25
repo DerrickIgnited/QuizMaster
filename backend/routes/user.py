@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 import sqlite3
 import json
 import redis
+from werkzeug.security import check_password_hash, generate_password_hash
 
 user_bp = Blueprint('user', __name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -77,24 +78,105 @@ def dashboard():
         'averageScore': average_score
     })
 
-@user_bp.route('/profile', methods=['GET'])
+@user_bp.route('/profile', methods=['GET', 'PUT'])
 @login_required
 def profile():
-    user_id = session['user_id']
-    
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    if request.method == 'GET':
+        conn = sqlite3.connect('quiz_master.db')
+        c = conn.cursor()
+        c.execute('SELECT * FROM users WHERE id = ?', (user_id,))
+        user = c.fetchone()
+        conn.close()
+
+        if user:
+            return jsonify({
+                'id': user[0],
+                'username': user[1],
+                'full_name': user[3],
+                'qualification': user[4],
+                'dob': user[5]
+            })
+
+        return jsonify({'error': 'User not found'}), 404
+
+    elif request.method == 'PUT':
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'Invalid input'}), 400
+
+        username = data.get('username')
+        full_name = data.get('full_name')
+        qualification = data.get('qualification')
+        dob = data.get('dob')
+
+        if not all([username, full_name, qualification, dob]):
+            return jsonify({'error': 'All fields are required'}), 400
+
+        conn = sqlite3.connect('quiz_master.db')
+        c = conn.cursor()
+        c.execute('''
+            UPDATE users
+            SET username = ?, full_name = ?, qualification = ?, dob = ?
+            WHERE id = ?
+        ''', (username, full_name, qualification, dob, user_id))
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            'id': user_id,
+            'username': username,
+            'full_name': full_name,
+            'qualification': qualification,
+            'dob': dob
+        })
+
+@user_bp.route('/change-password', methods=['PUT'])
+@login_required
+def change_password():
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'message': 'Invalid input'}), 400
+
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+
+    if not current_password or not new_password:
+        return jsonify({'message': 'Both current and new passwords are required'}), 400
+
+    # Fetch the current hashed password from DB
     conn = sqlite3.connect('quiz_master.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM users WHERE id = ?', (user_id,))
-    user = c.fetchone()
+    c.execute('SELECT password FROM users WHERE id = ?', (user_id,))
+    result = c.fetchone()
+
+    if not result:
+        conn.close()
+        return jsonify({'message': 'User not found'}), 404
+
+    stored_password_hash = result[0]
+
+    # Verify current password
+    if not check_password_hash(stored_password_hash, current_password):
+        conn.close()
+        return jsonify({'message': 'Incorrect current password'}), 403
+
+    # Hash and update new password
+    new_password_hash = generate_password_hash(new_password)
+
+    c.execute('UPDATE users SET password = ? WHERE id = ?', (new_password_hash, user_id))
+    conn.commit()
     conn.close()
-    
-    if user:
-        return jsonify({
-            'id': user[0],
-            'username': user[1],
-            'full_name': user[3],
-            'qualification': user[4],
-            'dob': user[5]
-        })
-    
-    return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({'message': 'Password updated successfully'})

@@ -7,6 +7,9 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
       <i class="fas fa-graduation-cap me-2"></i> Quiz Master
     </a>
     <div class="navbar-buttons">
+      <button v-if="currentUser" @click="currentView = 'profile'" class="btn modern-btn me-2">
+        <i class="fas fa-user me-2"></i>Profile
+      </button>
       <button v-if="currentUser" @click="logout" class="btn modern-btn me-2">
         <i class="fas fa-sign-out-alt me-2"></i>Logout
       </button>
@@ -41,6 +44,7 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
           @switch-to-contact-us="handleSwitchToContactus" />
     <AboutUs v-else-if="currentView === 'aboutus'" />
     <ContactUs v-else-if="currentView === 'contactus'" />
+    <Profile v-else-if="currentView === 'profile'" />
   </div>
 
   <Chatbot v-if="currentView !== 'quiz'" />
@@ -67,6 +71,7 @@ import Home from './components/Home.vue';
 import Chatbot from './components/Chatbot.vue';
 import AboutUs from './components/AboutUs.vue';
 import ContactUs from './components/ContactUs.vue';
+import Profile from './components/Profile.vue';
 
 const API_BASE = 'http://localhost:8001';
 export default {
@@ -80,7 +85,8 @@ export default {
     QuizAttempt,
     Chatbot,
     AboutUs,
-    ContactUs
+    ContactUs,
+    Profile
   },
   data() {
     return {
