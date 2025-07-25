@@ -16,7 +16,7 @@
       </div>
 
       <!-- Features -->
-      <div class="row justify-content-center mb-4">
+      <div class="row justify-content-center">
         <div class="col-md-5 mb-4" v-for="(feature, i) in features" :key="i">
           <div class="glass-card p-4 h-100">
             <h5 class="text-white"><i :class="feature.icon + ' me-2 text-' + feature.color"></i>{{ feature.title }}</h5>
@@ -26,9 +26,9 @@
       </div>
 
       <!-- Spline Viewer -->
-      <div class="row justify-content-center mb-4" style="background-color: transparent;">
+      <div class="row justify-content-center" style="background-color: transparent;">
         <div class="col-md-10" style="background-color: transparent;">
-          <spline-viewer url="https://prod.spline.design/9PvjbUlSfD1a59Oj/scene.splinecode" style="width: 100%; height: 500px;"></spline-viewer>
+          <spline-viewer url="https://prod.spline.design/D6VPvasrYt5mQ-bf/scene.splinecode" style="width: 100%; height: 750px;"></spline-viewer>
         </div>
       </div>
 
@@ -80,14 +80,15 @@
       </div>
 
       <!-- Login/Register CTA -->
-      <div class="row justify-content-center">
-        <div class="col-md-6">
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
           <div class="glass-card p-4 text-center">
             <h4 class="text-white mb-3">Ready to challenge your brain?</h4>
-            <button @click="$emit('switch-to-login')" class="btn modern-btn me-2"><i class="fas fa-sign-in-alt me-2"></i>Login</button>
-            <button @click="$emit('switch-to-register')" class="btn modern-btn me-2"><i class="fas fa-user-plus me-2"></i>Register</button>
-            <button @click="$emit('switch-to-about-us')" class="btn modern-btn me-2">About Us</button>
-            <button @click="$emit('switch-to-contact-us')" class="btn modern-btn me-2">Contact Us</button>
+            <br>
+            <button @click="$emit('switch-to-login')" class="btn modern-btn mx-5"><i class="fas fa-sign-in-alt me-2"></i>Login</button>
+            <button @click="$emit('switch-to-register')" class="btn modern-btn mx-5"><i class="fas fa-user-plus me-2"></i>Register</button>
+            <button @click="$emit('switch-to-about-us')" class="btn modern-btn mx-5">About Us</button>
+            <button @click="$emit('switch-to-contact-us')" class="btn modern-btn mx-5">Contact Us</button>
           </div>
         </div>
       </div>
