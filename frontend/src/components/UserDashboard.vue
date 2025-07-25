@@ -1,8 +1,8 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid d-flex justify-content-center">
       
       <div class="container">
-        <div class="row">
+        <div class="row justify-content-center">
           <div class="col-md-8">
             <div class="glass-card p-4 mb-4">
               <h5 class="text-white mb-4"><i class="fas fa-clipboard-list me-2"></i>Available Quizzes</h5>
@@ -25,7 +25,7 @@
             </div>
           </div>
           
-          <div class="row mb-4">
+          <div class="row mb-4 justify-content-center">
             <div class="col-md-8">
               <div class="glass-card p-4">
                 <h5 class="text-white mb-3"><i class="fas fa-chart-bar me-2"></i>Previous Test Scores</h5>
@@ -34,30 +34,35 @@
             </div>
           </div>
 
-          <div class="col-md-4">
-            <div class="glass-card p-4 mb-4">
-              <h5 class="text-white mb-3"><i class="fas fa-chart-bar me-2"></i>Your Stats</h5>
-              <div class="text-center">
-                <div class="mb-3">
-                  <h3 class="text-white fw-bold">{{scores.length}}</h3>
-                  <p class="text-white-50">Quizzes Completed</p>
-                </div>
-                <div class="mb-3">
-                  <h3 class="text-white fw-bold">{{averageScore.toFixed(1)}}%</h3>
-                  <p class="text-white-50">Average Score</p>
+          <div class="col-md-8">
+            <div class="row justify-content-center">
+              <div class="col-md-6">
+                <div class="glass-card p-4 mb-4">
+                  <h5 class="text-white mb-3"><i class="fas fa-chart-bar me-2"></i>Your Stats</h5>
+                  <div class="text-center">
+                    <div class="mb-3">
+                      <h3 class="text-white fw-bold">{{scores.length}}</h3>
+                      <p class="text-white-50">Quizzes Completed</p>
+                    </div>
+                    <div class="mb-3">
+                      <h3 class="text-white fw-bold">{{averageScore.toFixed(1)}}%</h3>
+                      <p class="text-white-50">Average Score</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div class="glass-card p-4">
-              <h5 class="text-white mb-3"><i class="fas fa-history me-2"></i>Recent Scores</h5>
-              <div class="d-flex justify-content-between mb-2">
-                <span class="text-white-50">Chapter Name</span>
-                <span class="text-white fw-bold">Score</span>
-              </div>
-              <div v-for="score in recentScores" :key="score.id" class="d-flex justify-content-between mb-2">
-                <span class="text-white-50">{{score.chapter_name}}</span>
-                <span class="text-white fw-bold">{{score.total_scored}}</span>
+              <div class="col-md-6">
+                <div class="glass-card p-4 mb-4">
+                  <h5 class="text-white mb-3"><i class="fas fa-history me-2"></i>Recent Scores</h5>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-white-50">Chapter Name</span>
+                    <span class="text-white fw-bold">Score</span>
+                  </div>
+                  <div v-for="score in recentScores" :key="score.id" class="d-flex justify-content-between mb-2">
+                    <span class="text-white-50">{{score.chapter_name}}</span>
+                    <span class="text-white fw-bold">{{score.total_scored}}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
