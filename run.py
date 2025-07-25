@@ -20,7 +20,7 @@ def run_backend():
     subprocess.run(['python', 'app.py'], cwd='backend')
 
 def run_frontend():
-    subprocess.run(['npm', 'run', 'dev'], cwd='frontend')
+    subprocess.run(['npm', 'run', 'dev', '--', '--host'], cwd='frontend')
 
 def main():
     print("Starting Quiz Master V2...")
