@@ -8,12 +8,16 @@ click-plugins==1.1.1.2
 click-repl==0.3.0
 Flask==2.3.3
 Flask-Cors==4.0.0
+iniconfig==2.1.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 kombu==5.5.4
 MarkupSafe==3.0.2
 packaging==25.0
+pluggy==1.6.0
 prompt_toolkit==3.0.51
+Pygments==2.19.2
+pytest==8.4.1
 python-dateutil==2.9.0.post0
 redis==5.0.1
 six==1.17.0
