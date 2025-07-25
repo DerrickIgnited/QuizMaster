@@ -7,8 +7,14 @@
       <i class="fas fa-crown me-2"></i> Quiz Master
     </a>
     <div class="ms-auto">
-      <button @click="logout" class="btn btn-outline-light">
+      <button v-if="currentUser" @click="logout" class="btn modern-btn me-2">
         <i class="fas fa-sign-out-alt me-2"></i>Logout
+      </button>
+      <button v-else @click="handleSwitchToLogin" class="btn modern-btn me-2">
+        <i class="fas fa-sign-in-alt me-2"></i>Login
+      </button>
+      <button @click="handleSwitchToRegister" class="btn modern-btn">
+        <i class="fas fa-user-plus me-2"></i>Register
       </button>
     </div>
   </nav>
@@ -88,3 +94,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+nav.navbar {
+  margin-bottom: 2rem;
+}
+</style>
