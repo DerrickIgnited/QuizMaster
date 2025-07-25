@@ -1,4 +1,3 @@
-<!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/frontend/src/components/UserDashboard.vue -->
 <template>
   <div class="container-fluid">
       
@@ -26,6 +25,15 @@
             </div>
           </div>
           
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <div class="glass-card p-4">
+                <h5 class="text-white mb-3"><i class="fas fa-chart-bar me-2"></i>Previous Test Scores</h5>
+                <canvas ref="chartRef" style="max-height: 250px;"></canvas>
+              </div>
+            </div>
+          </div>
+
           <div class="col-md-4">
             <div class="glass-card p-4 mb-4">
               <h5 class="text-white mb-3"><i class="fas fa-chart-bar me-2"></i>Your Stats</h5>
@@ -59,40 +67,154 @@
 </template>
 
 <script>
+import { defineComponent, ref, onMounted, watch } from 'vue';
+import {
+  Chart,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+Chart.register(LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
+
 const API_BASE = 'http://localhost:8001';
-export default {
+
+export default defineComponent({
   props: ['user'],
-  data() {
-    return {
-      quizzes: [],
-      scores: [],
-      recentScores: [],
-      averageScore: 0
-    };
-  },
-  mounted() {
-    this.loadDashboard();
-  },
-  methods: {
-    async loadDashboard() {
+  setup() {
+    const quizzes = ref([]);
+    const scores = ref([]);
+    const recentScores = ref([]);
+    const averageScore = ref(0);
+    const chartRef = ref(null);
+    let chartInstance = null;
+
+    const loadDashboard = async () => {
       try {
         const response = await fetch(`${API_BASE}/api/user/dashboard`, { credentials: 'include' });
         const data = await response.json();
-        this.quizzes = data.quizzes;
-        this.scores = data.scores;
-        this.recentScores = data.recentScores || [];
-        this.averageScore = data.averageScore || 0;
+        quizzes.value = data.quizzes;
+        scores.value = data.scores;
+        recentScores.value = data.recentScores || [];
+        averageScore.value = data.averageScore || 0;
+        updateChart();
       } catch (error) {
         alert('Failed to load dashboard');
       }
-    },
-    startQuiz(quizId) {
+    };
+
+    const updateChart = () => {
+      if (!chartRef.value) return;
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      const labels = scores.value.map((score, index) => score.chapter_name + ' #' + (index + 1));
+      const dataPoints = scores.value.map(score => score.total_scored);
+
+      chartInstance = new Chart(chartRef.value, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Test Scores',
+            data: dataPoints,
+            fill: false,
+            borderColor: '#ff6384',
+            backgroundColor: '#ff6384',
+            tension: 0.3,
+            pointHoverRadius: 7,
+            pointRadius: 5,
+            pointHoverBackgroundColor: '#ff6384',
+            pointHoverBorderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            },
+            tooltip: {
+              enabled: true,
+              mode: 'nearest',
+              intersect: false,
+              backgroundColor: '#333',
+              titleColor: '#fff',
+              bodyColor: '#fff'
+            },
+            title: {
+              display: true,
+              text: 'Previous Test Scores',
+              color: 'white',
+              font: {
+                size: 16,
+                weight: 'bold'
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            intersect: false
+          }
+        }
+      });
+    };
+
+    onMounted(() => {
+      loadDashboard();
+    });
+
+    watch(scores, () => {
+      updateChart();
+    });
+
+    const startQuiz = function(quizId) {
       this.$emit('start-quiz', quizId);
-    },
-    logout() {
+    };
+
+    const logout = () => {
       fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' })
-        .then(() => this.$emit('logout'));
-    }
+        .then(() => {
+          // emit logout event
+        });
+    };
+
+    return {
+      quizzes,
+      scores,
+      recentScores,
+      averageScore,
+      chartRef,
+      loadDashboard,
+      startQuiz,
+      logout
+    };
   }
-};
+});
 </script>

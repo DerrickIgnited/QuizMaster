@@ -37,7 +37,7 @@ def dashboard():
         FROM scores s 
         JOIN quizzes q ON s.quiz_id = q.id 
         JOIN chapters c ON q.chapter_id = c.id 
-        WHERE s.user_id = ? ORDER BY s.timestamp DESC''', (user_id,))
+        WHERE s.user_id = ? ORDER BY s.timestamp ASC''', (user_id,))
     scores = c.fetchall()
     
     conn.close()
