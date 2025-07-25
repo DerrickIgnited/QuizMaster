@@ -10,6 +10,9 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
       <button v-if="currentUser" @click="currentView = 'profile'" class="btn modern-btn me-2">
         <i class="fas fa-user me-2"></i>Profile
       </button>
+      <button v-if="currentUser" @click="currentView = userDashboardRoute" class="btn modern-btn me-2">
+        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+      </button>
       <button v-if="currentUser" @click="logout" class="btn modern-btn me-2">
         <i class="fas fa-sign-out-alt me-2"></i>Logout
       </button>
@@ -98,7 +101,9 @@ export default {
   methods: {
     handleLoginSuccess(user) {
       this.currentUser = user;
-      this.currentView = user.role === 'admin' ? 'admin' : 'user';
+      if (user && user.role) {
+        this.currentView = user.role === 'admin' ? 'admin' : 'user';
+      }
     },
     handleLogout() {
       this.currentUser = null;
@@ -132,6 +137,11 @@ export default {
     handleSwitchToContactus() {
       this.currentView = 'contactus';
     }
+  },
+  computed: {
+    userDashboardRoute() {
+      return this.currentUser?.role === 'admin' ? 'admin' : 'user';
+    }
   }
 };
 </script>
@@ -141,7 +151,7 @@ nav.navbar {
 }
 
 .navbar-buttons {
-  margin-left: 76%;
+  margin-left: 70%;
 }
 
 .app-footer {
