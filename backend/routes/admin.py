@@ -104,8 +104,13 @@ def manage_quizzes():
         conn.commit()
         return jsonify({'success': True})
     
-    c.execute('SELECT * FROM quizzes')
-    quizzes = [{ 'id': q[0], 'chapter_id': q[1], 'date_of_quiz': q[2], 'time_duration': q[3], 'remarks': q[4] } for q in c.fetchall()]
+    c.execute("""
+        SELECT q.*, c.name as chapter_name, s.name as subject_name
+        FROM quizzes q
+        JOIN chapters c ON q.chapter_id = c.id
+        JOIN subjects s ON c.subject_id = s.id;
+    """)
+    quizzes = [{ 'id': q[0], 'chapter_id': q[1], 'date_of_quiz': q[2], 'time_duration': q[3], 'remarks': q[4] , 'chapter_name': q[5], 'subject_name': q[6]} for q in c.fetchall()]
     
     conn.close()
     return jsonify(quizzes)

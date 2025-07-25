@@ -43,6 +43,10 @@
             
             <div class="glass-card p-4">
               <h5 class="text-white mb-3"><i class="fas fa-history me-2"></i>Recent Scores</h5>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-white-50">Chapter Name</span>
+                <span class="text-white fw-bold">Score</span>
+              </div>
               <div v-for="score in recentScores" :key="score.id" class="d-flex justify-content-between mb-2">
                 <span class="text-white-50">{{score.chapter_name}}</span>
                 <span class="text-white fw-bold">{{score.total_scored}}</span>
@@ -76,7 +80,7 @@ export default {
         const data = await response.json();
         this.quizzes = data.quizzes;
         this.scores = data.scores;
-        this.recentScores = data.recentScores;
+        this.recentScores = data.recentScores || [];
         this.averageScore = data.averageScore || 0;
       } catch (error) {
         alert('Failed to load dashboard');
