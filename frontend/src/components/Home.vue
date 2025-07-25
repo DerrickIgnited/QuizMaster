@@ -1,39 +1,161 @@
 <template>
-  <div class="home-container">
-    <h1>Welcome to Quiz Master</h1>
-    <p>Your ultimate quiz platform to test your knowledge and challenge yourself!</p>
-    <p>Features include:</p>
-    <ul>
-      <li>Create and attempt quizzes</li>
-      <li>Track your progress and scores</li>
-      <li>Compete with friends and other users</li>
-      <li>Admin dashboard for managing quizzes and users</li>
-    </ul>
-    <div class="buttons">
-      <button @click="$emit('switch-to-login')" class="btn modern-btn me-2">Login</button>
-      <button @click="$emit('switch-to-register')" class="btn modern-btn">Register</button>
+  <div class="container-fluid">
+    <div class="container py-5">
+
+      <!-- Welcome Card -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+          <div class="glass-card p-5 text-center">
+            <i class="fas fa-graduation-cap fa-3x text-white mb-3"></i>
+            <h2 class="text-white fw-bold mb-3">Welcome to Quiz Master</h2>
+            <p class="text-white-50">
+              Your ultimate quiz platform to test your knowledge, track your progress, and challenge yourself or your friends!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-5 mb-4" v-for="(feature, i) in features" :key="i">
+          <div class="glass-card p-4 h-100">
+            <h5 class="text-white"><i :class="feature.icon + ' me-2 text-' + feature.color"></i>{{ feature.title }}</h5>
+            <p class="text-white-50">{{ feature.desc }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why Choose Quiz Master -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+          <div class="glass-card p-4">
+            <h5 class="text-white mb-3"><i class="fas fa-lightbulb me-2"></i>Why Choose Quiz Master?</h5>
+            <ul class="text-white-50 list-unstyled ps-3">
+              <li><i class="fas fa-check text-success me-2"></i>No ads, no distractions</li>
+              <li><i class="fas fa-check text-success me-2"></i>Gamified learning experience</li>
+              <li><i class="fas fa-check text-success me-2"></i>Adaptive scoring engine</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+          <div class="glass-card p-4 text-center">
+            <h5 class="text-white mb-3"><i class="fas fa-signal me-2"></i>Platform Stats</h5>
+            <div class="row text-white-50">
+              <div class="col-md-4">
+                <h3 class="fw-bold text-white">1.2K+</h3>
+                <p>Registered Users</p>
+              </div>
+              <div class="col-md-4">
+                <h3 class="fw-bold text-white">5K+</h3>
+                <p>Quizzes Taken</p>
+              </div>
+              <div class="col-md-4">
+                <h3 class="fw-bold text-white">92%</h3>
+                <p>Avg User Accuracy</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonials -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-5 mb-3" v-for="(testimonial, index) in testimonials" :key="index">
+          <div class="glass-card p-3 text-white-50 fst-italic">
+            <p>"{{ testimonial.text }}"</p>
+            <small class="text-white d-block mt-2 text-end">— {{ testimonial.author }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Login/Register CTA -->
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="glass-card p-4 text-center">
+            <h4 class="text-white mb-3">Ready to challenge your brain?</h4>
+            <button @click="$emit('switch-to-login')" class="btn modern-btn me-2"><i class="fas fa-sign-in-alt me-2"></i>Login</button>
+            <button @click="$emit('switch-to-register')" class="btn modern-btn me-2"><i class="fas fa-user-plus me-2"></i>Register</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <Login v-if="showLogin" @close="showLogin = false" @login-success="onLoginSuccess"/>
+      <Register v-if="showRegister" @close="showRegister = false" @register-success="onRegisterSuccess"/>
+
     </div>
   </div>
 </template>
 
 <script>
+import Register from './Register.vue'
+import Login from './Login.vue'
+
 export default {
-  name: 'Home'
+  name: 'Home',
+  components: {
+    Register,
+    Login
+  },
+  data() {
+    return {
+      showLogin: false,
+      showRegister: false,
+      features: [
+        {
+          title: 'Create & Attempt Quizzes',
+          desc: 'Build your own quizzes or test your skills with existing ones.',
+          icon: 'fas fa-pen',
+          color: 'success'
+        },
+        {
+          title: 'Track Progress',
+          desc: 'Get insights into your performance with score history.',
+          icon: 'fas fa-chart-line',
+          color: 'info'
+        },
+        {
+          title: 'Compete with Friends',
+          desc: 'Challenge your friends and climb the leaderboard.',
+          icon: 'fas fa-user-friends',
+          color: 'warning'
+        },
+        {
+          title: 'Admin Dashboard',
+          desc: 'Manage quizzes, users, and monitor platform activity.',
+          icon: 'fas fa-cogs',
+          color: 'danger'
+        }
+      ],
+      testimonials: [
+        { text: 'Quiz Master helped me prep smarter for my UPSC.', author: 'Aarav, Delhi' },
+        { text: 'We use it for our college quiz competitions!', author: 'Shruti, VIT Chennai' }
+      ]
+    };
+  },
+  methods: {
+    onLoginSuccess(user) {
+      this.$emit('login-success', user);
+      this.showLogin = false;
+    },
+    onRegisterSuccess(user) {
+      this.$emit('register-success', user);
+      this.showRegister = false;
+    }
+  }
 };
 </script>
 
 <style scoped>
-.home-container {
-  max-width: 600px;
-  margin: 2rem auto;
-  text-align: center;
-}
-.buttons {
-  margin-top: 1.5rem;
-}
-.btn {
-  padding: 0.5rem 1.5rem;
-  font-size: 1.1rem;
-  cursor: pointer;
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 </style>

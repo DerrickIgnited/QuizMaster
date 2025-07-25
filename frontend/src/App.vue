@@ -4,7 +4,7 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
     <a class="navbar-brand fw-bold" href="#" @click.prevent="currentView = 'home'">
-      <i class="fas fa-crown me-2"></i> Quiz Master
+      <i class="fas fa-graduation-cap me-2"></i> Quiz Master
     </a>
     <div class="ms-auto">
       <button v-if="currentUser" @click="logout" class="btn modern-btn me-2">
