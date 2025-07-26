@@ -3,3 +3,4 @@ celerybeat*
 models
 database_tester.py
 .env
+new-schedule.db*

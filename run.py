@@ -4,6 +4,14 @@ import threading
 import time
 import socket
 
+def cleanup():
+    try:
+        subprocess.run(["./cleanup.sh"], check=True)
+        print("cleanup.sh executed successfully.")
+    except subprocess.CalledProcessError as e:
+        print("Error while running cleanup.sh")
+        print(e)
+
 def wait_for_redis(port=6379, timeout=30):
     """Check if Redis is up before starting Celery"""
     start_time = time.time()
@@ -26,11 +34,10 @@ def run_redis():
         sys.exit(1)
 
 def run_celery():
-    # app.celery will work if backend/app.py defines `celery = Celery(...)`
     # and imports tasks so they are registered
     hostname = socket.gethostname()
     subprocess.Popen(['celery', '-A', 'tasks.reminders', 'worker', '-n', f'worker@{hostname}', '--loglevel=info'], cwd='backend')
-    subprocess.Popen(['celery', '-A', 'tasks.reminders', 'beat', '--loglevel=info'], cwd='backend')
+    subprocess.Popen(['celery', '-A', 'tasks.reminders', 'beat', '--schedule=new-schedule.db', '--loglevel=info'], cwd='backend')
     print("Celery worker and beat started")
 
 def run_backend():
@@ -44,6 +51,7 @@ def run_frontend():
 def main():
     print("Starting Quiz Master V2...")
 
+    cleanup()
     # Start Redis
     threading.Thread(target=run_redis).start()
     if not wait_for_redis():
