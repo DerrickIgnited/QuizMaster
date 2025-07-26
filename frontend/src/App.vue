@@ -112,11 +112,9 @@ export default {
   },
   watch: {
     currentView(newView) {
-      // Prevent access to admin dashboard if user is not admin
       if (newView === 'admin' && (!this.currentUser || this.currentUser.role !== 'admin')) {
         this.currentView = this.currentUser ? 'user' : 'login';
       }
-      // Prevent access to user dashboard if user is not user
       if (newView === 'user' && (!this.currentUser || this.currentUser.role !== 'user')) {
         this.currentView = this.currentUser ? 'admin' : 'login';
       }
