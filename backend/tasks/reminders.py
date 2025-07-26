@@ -1,4 +1,4 @@
-from celery_worker import celery
+from celery import Celery
 from celery.schedules import crontab
 import sqlite3
 import requests
@@ -10,6 +10,10 @@ from email.mime.text import MIMEText
 from dotenv import load_dotenv
 
 load_dotenv()
+
+celery = Celery('quiz_master', broker=os.environ.get('REDIS_URL', 'redis://localhost:6379/0'))
+# Optional: if using result backend
+celery.conf.result_backend = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 
 @celery.task
 def send_daily_reminders():
@@ -171,3 +175,15 @@ def export_user_quiz_history_csv(username):
     conn.close()
     print(f"Quiz history exported for user: {username}")
     return f"{filename} generated successfully"
+
+celery.conf.beat_schedule = {
+    'daily-reminders': {
+        'task': 'tasks.reminders.send_daily_reminders',
+        'schedule': crontab(hour=13, minute=35),
+        #'schedule': crontab(minute='*/1'),  # every minute for testing
+    },
+    'monthly-user-report': {
+        'task': 'tasks.reminders.generate_monthly_report',
+        'schedule': crontab(day_of_month=1, hour=6, minute=0),
+    },
+}

@@ -29,8 +29,8 @@ def run_celery():
     # app.celery will work if backend/app.py defines `celery = Celery(...)`
     # and imports tasks so they are registered
     hostname = socket.gethostname()
-    subprocess.Popen(['celery', '-A', 'app.celery', 'worker', '-n', f'worker@{hostname}', '--loglevel=info'], cwd='backend')
-    subprocess.Popen(['celery', '-A', 'app.celery', 'beat', '-n', f'beat@{hostname}', '--loglevel=info'], cwd='backend')
+    subprocess.Popen(['celery', '-A', 'tasks.reminders', 'worker', '-n', f'worker@{hostname}', '--loglevel=info'], cwd='backend')
+    subprocess.Popen(['celery', '-A', 'tasks.reminders', 'beat', '--loglevel=info'], cwd='backend')
     print("Celery worker and beat started")
 
 def run_backend():
