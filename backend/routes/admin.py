@@ -85,7 +85,6 @@ def manage_chapters():
     if request.method == 'POST':
         try:
             data = request.json
-            print(f"Received chapter data: {data}")
             c.execute('INSERT INTO chapters (name, description, subject_id) VALUES (?, ?, ?)',
                       (data['name'], data['description'], data['subject_id']))
             conn.commit()
@@ -151,7 +150,6 @@ def manage_questions(quiz_id):
 @admin_bp.route('/subjects/<int:subject_id>', methods=['DELETE'])
 @admin_required
 def delete_subject(subject_id):
-    print(subject_id)
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('DELETE FROM subjects WHERE id = ?', (subject_id,))

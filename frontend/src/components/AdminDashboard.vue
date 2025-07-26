@@ -319,6 +319,37 @@ export default {
     async deleteSubject(subjectId) {
       if (!confirm('Are you sure you want to delete this subject? This will also delete related chapters, quizzes, and questions.')) return;
       try {
+        // Find chapters for this subject
+        const chaptersToDelete = this.chapters.filter(chap => chap.subject_id === subjectId);
+        for (const chapter of chaptersToDelete) {
+          // Find quizzes for this chapter
+          const quizzesToDelete = this.quizzes.filter(quiz => quiz.chapter_id === chapter.id);
+          for (const quiz of quizzesToDelete) {
+            // Fetch questions for this quiz
+            const questionsRes = await fetch(`${API_BASE}/api/admin/questions/${quiz.id}`, { credentials: 'include' });
+            if (questionsRes.ok) {
+              const questions = await questionsRes.json();
+              // Delete each question
+              for (const question of questions) {
+                await fetch(`${API_BASE}/api/admin/questions/${question.id}`, {
+                  method: 'DELETE',
+                  credentials: 'include'
+                });
+              }
+            }
+            // Delete quiz
+            await fetch(`${API_BASE}/api/admin/quizzes/${quiz.id}`, {
+              method: 'DELETE',
+              credentials: 'include'
+            });
+          }
+          // Delete chapter
+          await fetch(`${API_BASE}/api/admin/chapters/${chapter.id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+        }
+        // Delete subject
         const response = await fetch(`${API_BASE}/api/admin/subjects/${subjectId}`, {
           method: 'DELETE',
           credentials: 'include'
@@ -339,6 +370,28 @@ export default {
     async deleteChapter(chapterId) {
       if (!confirm('Are you sure you want to delete this chapter? This will also delete related quizzes and questions.')) return;
       try {
+        // Find quizzes for this chapter
+        const quizzesToDelete = this.quizzes.filter(quiz => quiz.chapter_id === chapterId);
+        for (const quiz of quizzesToDelete) {
+          // Fetch questions for this quiz
+          const questionsRes = await fetch(`${API_BASE}/api/admin/questions/${quiz.id}`, { credentials: 'include' });
+          if (questionsRes.ok) {
+            const questions = await questionsRes.json();
+            // Delete each question
+            for (const question of questions) {
+              await fetch(`${API_BASE}/api/admin/questions/${question.id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+              });
+            }
+          }
+          // Delete quiz
+          await fetch(`${API_BASE}/api/admin/quizzes/${quiz.id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+        }
+        // Delete chapter
         const response = await fetch(`${API_BASE}/api/admin/chapters/${chapterId}`, {
           method: 'DELETE',
           credentials: 'include'
@@ -359,6 +412,19 @@ export default {
     async deleteQuiz(quizId) {
       if (!confirm('Are you sure you want to delete this quiz? This will also delete related questions.')) return;
       try {
+        // Fetch questions for this quiz
+        const questionsRes = await fetch(`${API_BASE}/api/admin/questions/${quizId}`, { credentials: 'include' });
+        if (questionsRes.ok) {
+          const questions = await questionsRes.json();
+          // Delete each question
+          for (const question of questions) {
+            await fetch(`${API_BASE}/api/admin/questions/${question.id}`, {
+              method: 'DELETE',
+              credentials: 'include'
+            });
+          }
+        }
+        // Delete quiz
         const response = await fetch(`${API_BASE}/api/admin/quizzes/${quizId}`, {
           method: 'DELETE',
           credentials: 'include'
@@ -379,7 +445,7 @@ export default {
     async deleteQuestion(questionId) {
       if (!confirm('Are you sure you want to delete this question?')) return;
       try {
-        const response = await fetch(`${API_BASE}/api/admin/questions/${this.selectedQuizId}/${questionId}`, {
+        const response = await fetch(`${API_BASE}/api/admin/questions/${questionId}`, {
           method: 'DELETE',
           credentials: 'include'
         });
