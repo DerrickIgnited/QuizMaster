@@ -22,6 +22,7 @@ redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=T
 
 # Celery setup
 celery = Celery('quiz_master', broker='redis://localhost:6379/0')
+celery.conf.broker_connection_retry_on_startup = True
 
 # Database initialization
 def init_db():
