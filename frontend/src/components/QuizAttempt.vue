@@ -55,7 +55,7 @@
             </div>
             
             <div class="d-flex justify-content-between">
-              <button @click="previousQuestion" :disabled="currentQuestion === 0" class="btn btn-outline-light">
+              <button @click="previousQuestion" :disabled="currentQuestion === 0" class="btn modern-btn w-10 text-white">
                 <i class="fas fa-chevron-left me-2"></i>Previous
               </button>
               
@@ -63,7 +63,7 @@
                 Next <i class="fas fa-chevron-right ms-2"></i>
               </button>
               
-              <button v-else @click="submitQuiz" class="btn btn-success">
+              <button v-else @click="submitQuiz" class="btn modern-btn w-10">
                 <i class="fas fa-check me-2"></i>Submit Quiz
               </button>
             </div>

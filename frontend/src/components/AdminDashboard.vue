@@ -43,10 +43,11 @@
                 <button type="submit" class="btn modern-btn w-100">Add Subject</button>
               </form>
               <h5 class="text-white mt-4 mb-3">Existing Subjects</h5>
+              <input v-model="searchSubject" class="form-control bg-transparent border-white text-white mb-3" placeholder="Search Subjects">
               <ul class="list-group">
-                <li v-for="subject in subjects" :key="subject.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+                <li v-for="subject in filteredSubjects" :key="subject.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
                   {{ subject.name }}
-                  <button @click="deleteSubject(subject.id)" class="btn btn-sm btn-danger">Delete</button>
+                  <button @click="deleteSubject(subject.id)" class="btn modern-btn w-10">Delete</button>
                 </li>
               </ul>
             </div>
@@ -65,10 +66,11 @@
                 <button type="submit" class="btn modern-btn w-100">Add Chapter</button>
               </form>
               <h5 class="text-white mt-4 mb-3">Existing Chapters</h5>
+              <input v-model="searchChapter" class="form-control bg-transparent border-white text-white mb-3" placeholder="Search Chapters">
               <ul class="list-group">
-                <li v-for="chapter in chapters" :key="chapter.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+                <li v-for="chapter in filteredChapters" :key="chapter.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
                   {{ chapter.name }}
-                  <button @click="deleteChapter(chapter.id)" class="btn btn-sm btn-danger">Delete</button>
+                  <button @click="deleteChapter(chapter.id)" class="btn modern-btn w-10">Delete</button>
                 </li>
               </ul>
             </div>
@@ -99,6 +101,7 @@
 
         <div class="glass-card p-4 mb-4">
           <h5 class="text-white mb-3"><i class="fas fa-list me-2"></i>Manage Quizzes</h5>
+          <input v-model="searchQuiz" class="form-control bg-transparent border-white text-white mb-3" placeholder="Search Quizzes">
           <div class="table-responsive">
             <table class="table table-dark table-striped">
               <thead>
@@ -111,16 +114,16 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="quiz in quizzes" :key="quiz.id">
+                <tr v-for="quiz in filteredQuizzes" :key="quiz.id">
                   <td>{{quiz.subject_name}}</td>
                   <td>{{quiz.chapter_name}}</td>
                   <td>{{quiz.date_of_quiz}}</td>
                   <td>{{quiz.time_duration}} min</td>
                   <td>
-                    <button @click="manageQuestions(quiz.id)" class="btn btn-sm btn-primary me-2">
+                    <button @click="manageQuestions(quiz.id)" class="btn modern-btn w-10 margin-right-5">
                       Questions
                     </button>
-                    <button @click="deleteQuiz(quiz.id)" class="btn btn-sm btn-danger">
+                    <button @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
                       <i class="fas fa-trash me-1"></i>Delete
                     </button>
                   </td>
@@ -153,7 +156,7 @@
               <option value="4">Option 4</option>
             </select>
             <button type="submit" class="btn modern-btn me-2">Add Question</button>
-            <button @click="selectedQuizId = null" type="button" class="btn btn-secondary">Close</button>
+            <button @click="selectedQuizId = null" type="button" class="btn modern-btn w-10">Close</button>
           </form>
           
           <div class="table-responsive">
@@ -179,7 +182,7 @@
                   </td>
                   <td>Option {{question.correct_answer}}</td>
                   <td>
-                    <button @click="deleteQuestion(question.id)" class="btn btn-sm btn-danger">Delete</button>
+                    <button @click="deleteQuestion(question.id)" class="btn modern-btn w-10">Delete</button>
                   </td>
                 </tr>
               </tbody>
@@ -204,8 +207,11 @@ export default {
       newSubject: { name: '', description: '' },
       newChapter: { name: '', description: '', subject_id: '' },
       newQuiz: { chapter_id: '', date_of_quiz: '', time_duration: '', remarks: '' },
-      newQuestion: { question_statement: '', option1: '', option2: '', option3: '', option4: '', correct_answer: '' }
-    }
+      newQuestion: { question_statement: '', option1: '', option2: '', option3: '', option4: '', correct_answer: '' },
+      searchSubject: '',
+      searchChapter: '',
+      searchQuiz: ''
+    };
   },
   async mounted() {
     await this.loadData();
@@ -218,16 +224,16 @@ export default {
           fetch(`${API_BASE}/api/admin/chapters`, { credentials: 'include' }),
           fetch(`${API_BASE}/api/admin/quizzes`, { credentials: 'include' })
         ]);
-        
+
         this.subjects = await subjectsRes.json();
         this.chapters = await chaptersRes.json();
         this.quizzes = await quizzesRes.json();
-        
+
         this.stats = {
           subjects: this.subjects.length,
           chapters: this.chapters.length,
           quizzes: this.quizzes.length,
-          users: 50 // Mock data
+          users: 50 // mock data
         };
       } catch (error) {
         console.error('Failed to load data:', error);
@@ -408,6 +414,26 @@ export default {
         alert('Something went wrong while triggering reminders.');
         console.error(error);
       }
+    }
+  },
+  computed: {
+    filteredSubjects() {
+      const s = this.searchSubject.toLowerCase();
+      return !s ? this.subjects : this.subjects.filter(sub => sub.name.toLowerCase().includes(s));
+    },
+    filteredChapters() {
+      const s = this.searchChapter.toLowerCase();
+      return !s ? this.chapters : this.chapters.filter(chap => chap.name.toLowerCase().includes(s));
+    },
+    filteredQuizzes() {
+      const s = this.searchQuiz.toLowerCase();
+      return !s ? this.quizzes : this.quizzes.filter(q =>
+        q.subject_name?.toLowerCase().includes(s) ||
+        q.chapter_name?.toLowerCase().includes(s) ||
+        q.date_of_quiz?.toLowerCase().includes(s) ||
+        q.time_duration?.toString().includes(s) ||
+        q.remarks?.toLowerCase().includes(s)
+      );
     }
   }
 };
