@@ -19,7 +19,6 @@ def login_required(f):
 
 @user_bp.route('/dashboard', methods=['GET'])
 @login_required
-@cache_response('user_dashboard', timeout=60)
 def dashboard():
     user_id = session['user_id']
     
@@ -83,7 +82,6 @@ def dashboard():
 
 @user_bp.route('/profile', methods=['GET', 'PUT'])
 @login_required
-@cache_response('user_profile', timeout=60)
 def profile():
     user_id = session.get('user_id')
 
@@ -142,7 +140,6 @@ def profile():
 
 @user_bp.route('/change-password', methods=['PUT'])
 @login_required
-@cache_response('user_changepassword', timeout=60)
 def change_password():
     user_id = session.get('user_id')
 
@@ -188,7 +185,6 @@ def change_password():
 
 @user_bp.route('/trigger-reminders', methods=['POST'])
 @login_required
-@cache_response('trigger-reminders', timeout=60)
 def trigger_export():
     user_id = session.get('user_id')
     conn = sqlite3.connect('quiz_master.db')
