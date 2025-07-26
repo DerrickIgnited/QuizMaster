@@ -1,4 +1,3 @@
-e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/frontend/src/App.vue -->
 <template>
   <Starfield />
 
@@ -33,13 +32,13 @@ e <!-- filepath: /Users/derricksamuel/Desktop/IITM/quiz_master_23f2001426/fronte
               @switch-to-login="handleSwitchToLogin" />
     <AdminDashboard v-else-if="currentView === 'admin'"
                     @logout="handleLogout" />
-    <UserDashboard v-else-if="currentView === 'user'"
-                   :user="currentUser"
-                   @logout="handleLogout"
-                   @start-quiz="handleStartQuiz" />
-    <QuizAttempt v-else-if="currentView === 'quiz'"
-                 :quiz-id="selectedQuizId"
-                 @back-to-dashboard="handleBackToDashboard" />
+<UserDashboard ref="userDashboard" v-else-if="currentView === 'user'"
+               :user="currentUser"
+               @logout="handleLogout"
+               @start-quiz="handleStartQuiz" />
+<QuizAttempt v-else-if="currentView === 'quiz'"
+             :quiz-id="selectedQuizId"
+             @back-to-dashboard="handleBackToDashboard" />
     <Home v-else-if="currentView === 'home'"
           @switch-to-login="handleSwitchToLogin"
           @switch-to-register="handleSwitchToRegister"
@@ -98,9 +97,35 @@ export default {
       selectedQuizId: null
     };
   },
+  created() {
+    // Load user from localStorage if available
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUser = user;
+        this.currentView = user.role === 'admin' ? 'admin' : 'user';
+      } catch (e) {
+        localStorage.removeItem('currentUser');
+      }
+    }
+  },
+  watch: {
+    currentView(newView) {
+      // Prevent access to admin dashboard if user is not admin
+      if (newView === 'admin' && (!this.currentUser || this.currentUser.role !== 'admin')) {
+        this.currentView = this.currentUser ? 'user' : 'login';
+      }
+      // Prevent access to user dashboard if user is not user
+      if (newView === 'user' && (!this.currentUser || this.currentUser.role !== 'user')) {
+        this.currentView = this.currentUser ? 'admin' : 'login';
+      }
+    }
+  },
   methods: {
     handleLoginSuccess(user) {
       this.currentUser = user;
+      localStorage.setItem('currentUser', JSON.stringify(user));
       if (user && user.role) {
         this.currentView = user.role === 'admin' ? 'admin' : 'user';
       }
@@ -109,6 +134,7 @@ export default {
       this.currentUser = null;
       this.currentView = 'home';
       this.selectedQuizId = null;
+      localStorage.removeItem('currentUser');
     },
     handleSwitchToRegister() {
       this.currentView = 'register';
@@ -120,16 +146,19 @@ export default {
       this.selectedQuizId = quizId;
       this.currentView = 'quiz';
     },
-    handleBackToDashboard() {
-      this.currentView = this.currentUser.role === 'admin' ? 'admin' : 'user';
-      this.selectedQuizId = null;
-    },
+handleBackToDashboard() {
+  this.currentView = this.currentUser.role === 'admin' ? 'admin' : 'user';
+  this.selectedQuizId = null;
+  if (this.currentUser.role === 'user' && this.$refs.userDashboard) {
+    this.$refs.userDashboard.loadDashboard();
+  }
+},
     logout() {
       fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' })
         .then(() => {
-        this.handleLogout();
-      })
-      .catch(err => console.error('Logout failed:', err));
+          this.handleLogout();
+        })
+        .catch(err => console.error('Logout failed:', err));
     },
     handleSwitchToAboutus() {
       this.currentView = 'aboutus';
@@ -145,6 +174,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 nav.navbar {
   margin-bottom: 2rem;

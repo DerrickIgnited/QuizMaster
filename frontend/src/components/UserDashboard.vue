@@ -6,8 +6,9 @@
           <div class="col-md-8">
             <div class="glass-card p-4 mb-4">
               <h5 class="text-white mb-4"><i class="fas fa-clipboard-list me-2"></i>Available Quizzes</h5>
+              <input type="text" v-model="searchTerm" placeholder="Search quizzes..." class="form-control mb-3" />
               <div class="row">
-                <div v-for="quiz in quizzes" :key="quiz.id" class="col-md-6 mb-3">
+                <div v-for="quiz in filteredQuizzes" :key="quiz.id" class="col-md-6 mb-3">
                   <div class="quiz-card glass-card p-3">
                     <h6 class="text-white">{{quiz.subject_name}}</h6>
                     <p class="text-white-50 mb-2">{{quiz.chapter_name}}</p>
@@ -77,7 +78,8 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, watch } from 'vue';
+import { defineComponent, ref, onMounted, watch, computed } from 'vue';
+import { debounce } from 'lodash';
 import {
   Chart,
   LineController,
@@ -102,7 +104,17 @@ export default defineComponent({
     const recentScores = ref([]);
     const averageScore = ref(0);
     const chartRef = ref(null);
+    const searchTerm = ref('');
     let chartInstance = null;
+
+    const filteredQuizzes = computed(() => {
+      if (!searchTerm.value) return quizzes.value;
+      const term = searchTerm.value.toLowerCase();
+      return quizzes.value.filter(q =>
+        (q.subject_name && q.subject_name.toLowerCase().includes(term)) ||
+        (q.chapter_name && q.chapter_name.toLowerCase().includes(term))
+      );
+    });
 
     const loadDashboard = async () => {
       try {
@@ -200,9 +212,9 @@ export default defineComponent({
       loadDashboard();
     });
 
-    watch(scores, () => {
+    watch(scores, debounce(() => {
       updateChart();
-    });
+    }, 300));
 
     const startQuiz = function(quizId) {
       this.$emit('start-quiz', quizId);
@@ -221,6 +233,8 @@ export default defineComponent({
       recentScores,
       averageScore,
       chartRef,
+      searchTerm,
+      filteredQuizzes,
       loadDashboard,
       startQuiz,
       logout
