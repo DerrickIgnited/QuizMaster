@@ -1,9 +1,12 @@
 from flask import Blueprint, request, jsonify, session
+import os
 import sqlite3
 import json
 import redis
 from .utils import cache_response
 from tasks import reminders
+
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'quiz_master.db'))
 
 admin_bp = Blueprint('admin', __name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -18,9 +21,8 @@ def admin_required(f):
 
 @admin_bp.route('/dashboard', methods=['GET'])
 @admin_required
-@cache_response('admin_dashboard', timeout=60)
 def admin_dashboard():
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     stats = {}
     c.execute('SELECT COUNT(*) FROM subjects')
@@ -49,9 +51,8 @@ def admin_dashboard():
 
 @admin_bp.route('/subjects', methods=['GET', 'POST'])
 @admin_required
-@cache_response('admin_subject', timeout=60)
 def manage_subjects():
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     if request.method == 'POST':
@@ -77,18 +78,22 @@ def manage_subjects():
 
 @admin_bp.route('/chapters', methods=['GET', 'POST'])
 @admin_required
-@cache_response('admin_chapters', timeout=60)
 def manage_chapters():
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     if request.method == 'POST':
-        data = request.json
-        c.execute('INSERT INTO chapters (name, description, subject_id) VALUES (?, ?, ?)',
-                  (data['name'], data['description'], data['subject_id']))
-        conn.commit()
-        redis_client.delete(f'chapters_subject_{data["subject_id"]}')
-        return jsonify({'success': True})
+        try:
+            data = request.json
+            print(f"Received chapter data: {data}")
+            c.execute('INSERT INTO chapters (name, description, subject_id) VALUES (?, ?, ?)',
+                      (data['name'], data['description'], data['subject_id']))
+            conn.commit()
+            redis_client.delete(f'chapters_subject_{data["subject_id"]}')
+            return jsonify({'success': True})
+        except Exception as e:
+            print(f"Error inserting chapter: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 400
     
     c.execute('SELECT * FROM chapters')
     chapters = [{'id': c[0], 'name': c[1], 'description': c[2], 'subject_id': c[3]} for c in c.fetchall()]
@@ -98,9 +103,8 @@ def manage_chapters():
 
 @admin_bp.route('/quizzes', methods=['GET', 'POST'])
 @admin_required
-@cache_response('admin_quizzes', timeout=60)
 def manage_quizzes():
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     if request.method == 'POST':
@@ -123,9 +127,8 @@ def manage_quizzes():
 
 @admin_bp.route('/questions/<int:quiz_id>', methods=['GET', 'POST'])
 @admin_required
-@cache_response('admin_questions', timeout=60)
 def manage_questions(quiz_id):
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     if request.method == 'POST':
@@ -147,10 +150,9 @@ def manage_questions(quiz_id):
 
 @admin_bp.route('/subjects/<int:subject_id>', methods=['DELETE'])
 @admin_required
-@cache_response('admin_subject', timeout=60)
 def delete_subject(subject_id):
     print(subject_id)
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('DELETE FROM subjects WHERE id = ?', (subject_id,))
     conn.commit()
@@ -159,9 +161,8 @@ def delete_subject(subject_id):
 
 @admin_bp.route('/chapters/<int:chapter_id>', methods=['DELETE'])
 @admin_required
-@cache_response('admin_chapters', timeout=60)
 def delete_chapter(chapter_id):
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('DELETE FROM chapters WHERE id = ?', (chapter_id,))
     conn.commit()
@@ -170,9 +171,8 @@ def delete_chapter(chapter_id):
 
 @admin_bp.route('/quizzes/<int:quiz_id>', methods=['DELETE'])
 @admin_required
-@cache_response('admin_quizzes', timeout=60)
 def delete_quiz(quiz_id):
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('DELETE FROM quizzes WHERE id = ?', (quiz_id,))
     conn.commit()
@@ -181,9 +181,8 @@ def delete_quiz(quiz_id):
 
 @admin_bp.route('/questions/<int:question_id>', methods=['DELETE'])
 @admin_required
-@cache_response('admin_questions', timeout=60)
 def delete_question(question_id):
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('DELETE FROM questions WHERE id = ?', (question_id,))
     conn.commit()
@@ -192,7 +191,6 @@ def delete_question(question_id):
 
 @admin_bp.route('/trigger-reminders', methods=['POST'])
 @admin_required
-@cache_response('trigger-reminders', timeout=60)
 def trigger_export():
 
     reminders.export_user_performance_csv.apply().get()

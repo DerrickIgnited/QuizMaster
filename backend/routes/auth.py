@@ -3,18 +3,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import redis
 from .utils import cache_response
+import os
 
 auth_bp = Blueprint('auth', __name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'quiz_master.db'))
 
 @auth_bp.route('/login', methods=['POST'])
-@cache_response('login', timeout=60)
 def login():
     data = request.json
     username = data.get('username')
     password = data.get('password')
     
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = c.fetchone()
@@ -36,7 +37,6 @@ def login():
     return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
 @auth_bp.route('/register', methods=['POST'])
-@cache_response('register', timeout=60)
 def register():
     data = request.json
     username = data.get('username')
@@ -45,7 +45,7 @@ def register():
     qualification = data.get('qualification', '')
     dob = data.get('dob', '')
     
-    conn = sqlite3.connect('quiz_master.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     try:
@@ -59,7 +59,6 @@ def register():
         conn.close()
 
 @auth_bp.route('/logout', methods=['POST'])
-@cache_response('logout', timeout=60)
 def logout():
     session.clear()
     return jsonify({'success': True})

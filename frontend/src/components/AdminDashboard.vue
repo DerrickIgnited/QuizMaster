@@ -57,7 +57,7 @@
             <div class="glass-card p-4">
               <h5 class="text-white mb-3"><i class="fas fa-plus me-2"></i>Add Chapter</h5>
               <form @submit.prevent="addChapter">
-                <select v-model="newChapter.subject_id" class="form-control bg-transparent border-white text-white mb-2" required>
+              <select v-model.number="newChapter.subject_id" class="form-control bg-transparent border-white text-white mb-2" required>
                   <option value="">Select Subject</option>
                   <option v-for="subject in subjects" :value="subject.id">{{subject.name}}</option>
                 </select>
