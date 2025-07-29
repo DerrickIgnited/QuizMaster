@@ -6,7 +6,7 @@ import socket
 
 def cleanup():
     try:
-        subprocess.run(["./cleanup.sh"], check=True)
+        subprocess.run(["backend/./cleanup.sh"], check=True)
         print("cleanup.sh executed successfully.")
     except subprocess.CalledProcessError as e:
         print("Error while running cleanup.sh")
