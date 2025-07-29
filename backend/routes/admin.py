@@ -193,3 +193,22 @@ def trigger_export():
 
     reminders.export_user_performance_csv.apply().get()
     return jsonify({'message': 'Export triggered!'})
+
+@admin_bp.route('/users', methods=['GET'])
+@admin_required
+def get_users_with_average_scores():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    # Query users with average score
+    c.execute('''
+        SELECT u.id, u.username, u.full_name, 
+        COALESCE(AVG(s.total_scored), 0) AS average_score
+        FROM users u
+        LEFT JOIN scores s ON u.id = s.user_id
+        WHERE u.role = 'user'
+        GROUP BY u.id, u.username, u.full_name
+        ORDER BY u.username;
+    ''')
+    users = [{'id': row[0], 'username': row[1], 'full_name': row[2], 'average_score': row[3]} for row in c.fetchall()]
+    conn.close()
+    return jsonify(users)

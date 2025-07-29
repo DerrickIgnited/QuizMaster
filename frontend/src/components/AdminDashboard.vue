@@ -190,7 +190,33 @@
           </div>
         </div>
       </div>
+
+      <div class="glass-card p-4 mb-4" style="width: 51.3%;margin-left: 24.4%;">
+        <h5 class="text-white mb-3"><i class="fas fa-users me-2"></i>Users and Average Scores</h5>
+        <input v-model="searchUser" class="form-control bg-transparent border-white text-white mb-3" placeholder="Search Users">
+        <div class="table-responsive">
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Full Name</th>
+                <th>Average Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in filteredUsers" :key="user.id">
+                <td>{{ user.username }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.average_score.toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
+
+
 </template>
 
 <script>
@@ -198,10 +224,12 @@ const API_BASE = 'http://localhost:8001';
 export default {
   data() {
     return {
+      searchUser: '',
       stats: { subjects: 0, chapters: 0, quizzes: 0, users: 0 },
       subjects: [],
       chapters: [],
       quizzes: [],
+      users: [],
       questions: [],
       selectedQuizId: null,
       newSubject: { name: '', description: '' },
@@ -215,30 +243,44 @@ export default {
   },
   async mounted() {
     await this.loadData();
+    await this.loadUsers();
   },
   methods: {
-    async loadData() {
-      try {
-        const [subjectsRes, chaptersRes, quizzesRes] = await Promise.all([
-          fetch(`${API_BASE}/api/admin/subjects`, { credentials: 'include' }),
-          fetch(`${API_BASE}/api/admin/chapters`, { credentials: 'include' }),
-          fetch(`${API_BASE}/api/admin/quizzes`, { credentials: 'include' })
-        ]);
+      async loadData() {
+        try {
+          const [subjectsRes, chaptersRes, quizzesRes] = await Promise.all([
+            fetch(`${API_BASE}/api/admin/subjects`, { credentials: 'include' }),
+            fetch(`${API_BASE}/api/admin/chapters`, { credentials: 'include' }),
+            fetch(`${API_BASE}/api/admin/quizzes`, { credentials: 'include' })
+          ]);
 
-        this.subjects = await subjectsRes.json();
-        this.chapters = await chaptersRes.json();
-        this.quizzes = await quizzesRes.json();
+          this.subjects = await subjectsRes.json();
+          this.chapters = await chaptersRes.json();
+          this.quizzes = await quizzesRes.json();
 
-        this.stats = {
-          subjects: this.subjects.length,
-          chapters: this.chapters.length,
-          quizzes: this.quizzes.length,
-          users: 50 // mock data
-        };
-      } catch (error) {
-        console.error('Failed to load data:', error);
-      }
-    },
+          this.stats = {
+            subjects: this.subjects.length,
+            chapters: this.chapters.length,
+            quizzes: this.quizzes.length,
+            users: this.stats.users // keep current users count here
+          };
+        } catch (error) {
+          console.error('Failed to load data:', error);
+        }
+      },
+      async loadUsers() {
+        try {
+          const response = await fetch(`${API_BASE}/api/admin/users`, { credentials: 'include' });
+          if (response.ok) {
+            this.users = await response.json();
+            this.stats.users = this.users.length; // update users count here
+          } else {
+            console.error('Failed to load users');
+          }
+        } catch (error) {
+          console.error('Failed to load users:', error);
+        }
+      },
     async addSubject() {
       try {
         const response = await fetch(`${API_BASE}/api/admin/subjects`, {
@@ -500,6 +542,10 @@ export default {
         q.time_duration?.toString().includes(s) ||
         q.remarks?.toLowerCase().includes(s)
       );
+    },
+    filteredUsers() {
+      const s = this.searchUser.toLowerCase();
+      return !s ? this.users : this.users.filter(user => user.username.toLowerCase().includes(s) || user.full_name.toLowerCase().includes(s));
     }
   }
 };
