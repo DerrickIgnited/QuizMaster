@@ -17,6 +17,13 @@ A full-stack quiz management system built with Flask (backend), Vue 3 + Vite (fr
 - Celery (will be started automatically)
 - All Python and Node dependencies installed (`pip install -r requirements.txt` and `npm install` in `frontend`)
 
+- Create a `.env` file in the `backend` directory with the following environment variables:
+  ```
+  GEMINI_API_KEY=your_gemini_api_key_here
+  EMAIL_PASSWORD=your_email_password_here
+  EMAIL_ID=your_email_id_here
+  ```
+
 ## Quick Start
 
 1. **Install dependencies:**

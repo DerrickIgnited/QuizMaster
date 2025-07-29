@@ -111,7 +111,7 @@ def generate_monthly_report():
 
 def send_email(to_email, subject, html_body):
     """Send an email using SMTP (update config for production)"""
-    from_email = "derrickrds@gmail.com"  # change this
+    from_email = os.environ.get("EMAIL_ID")
     from_password =os.environ.get('EMAIL_PASSWORD')
 
     msg = MIMEText(html_body, 'html')
