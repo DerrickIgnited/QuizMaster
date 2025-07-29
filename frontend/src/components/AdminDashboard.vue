@@ -44,12 +44,23 @@
               </form>
               <h5 class="text-white mt-4 mb-3">Existing Subjects</h5>
               <input v-model="searchSubject" class="form-control bg-transparent border-white text-white mb-3" placeholder="Search Subjects">
-              <ul class="list-group">
-                <li v-for="subject in filteredSubjects" :key="subject.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
-                  {{ subject.name }}
-                  <button @click="deleteSubject(subject.id)" class="btn modern-btn w-10">Delete</button>
-                </li>
-              </ul>
+      <ul class="list-group">
+        <li v-for="subject in filteredSubjects" :key="subject.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+          <div v-if="editSubjectId !== subject.id">
+            {{ subject.name }}
+          </div>
+          <div v-else>
+            <input v-model="editSubjectData.name" class="form-control bg-transparent border-white text-white mb-1" />
+            <textarea v-model="editSubjectData.description" class="form-control bg-transparent border-white text-white mb-1"></textarea>
+          </div>
+          <div>
+            <button v-if="editSubjectId !== subject.id" @click="startEditSubject(subject)" class="btn modern-btn w-10 me-1">Edit</button>
+            <button v-else @click="updateSubject(subject.id)" class="btn modern-btn w-10 me-1">Save</button>
+            <button v-if="editSubjectId === subject.id" @click="cancelEditSubject" class="btn modern-btn w-10 me-1">Cancel</button>
+            <button v-if="editSubjectId !== subject.id" @click="deleteSubject(subject.id)" class="btn modern-btn w-10">Delete</button>
+          </div>
+        </li>
+      </ul>
             </div>
           </div>
           
@@ -67,12 +78,26 @@
               </form>
               <h5 class="text-white mt-4 mb-3">Existing Chapters</h5>
               <input v-model="searchChapter" class="form-control bg-transparent border-white text-white mb-3" placeholder="Search Chapters">
-              <ul class="list-group">
-                <li v-for="chapter in filteredChapters" :key="chapter.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
-                  {{ chapter.name }}
-                  <button @click="deleteChapter(chapter.id)" class="btn modern-btn w-10">Delete</button>
-                </li>
-              </ul>
+      <ul class="list-group">
+        <li v-for="chapter in filteredChapters" :key="chapter.id" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+          <div v-if="editChapterId !== chapter.id">
+            {{ chapter.name }}
+          </div>
+          <div v-else>
+            <select v-model.number="editChapterData.subject_id" class="form-control bg-transparent border-white text-white mb-1">
+              <option v-for="subject in subjects" :value="subject.id" :key="subject.id">{{ subject.name }}</option>
+            </select>
+            <input v-model="editChapterData.name" class="form-control bg-transparent border-white text-white mb-1" />
+            <textarea v-model="editChapterData.description" class="form-control bg-transparent border-white text-white mb-1"></textarea>
+          </div>
+          <div>
+            <button v-if="editChapterId !== chapter.id" @click="startEditChapter(chapter)" class="btn modern-btn w-10 me-1">Edit</button>
+            <button v-else @click="updateChapter(chapter.id)" class="btn modern-btn w-10 me-1">Save</button>
+            <button v-if="editChapterId === chapter.id" @click="cancelEditChapter" class="btn modern-btn w-10 me-1">Cancel</button>
+            <button v-if="editChapterId !== chapter.id" @click="deleteChapter(chapter.id)" class="btn modern-btn w-10">Delete</button>
+          </div>
+        </li>
+      </ul>
             </div>
           </div>
           
@@ -120,10 +145,13 @@
                   <td>{{quiz.date_of_quiz}}</td>
                   <td>{{quiz.time_duration}} min</td>
                   <td>
-                    <button @click="manageQuestions(quiz.id)" class="btn modern-btn w-10 margin-right-5">
+                    <button @click="manageQuestions(quiz.id)" class="btn modern-btn w-10 me-1">
                       Questions
                     </button>
-                    <button @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
+                    <button v-if="editQuizId !== quiz.id" @click="startEditQuiz(quiz)" class="btn modern-btn w-10 me-1">Edit</button>
+                    <button v-else @click="updateQuiz(quiz.id)" class="btn modern-btn w-10 me-1">Save</button>
+                    <button v-if="editQuizId === quiz.id" @click="cancelEditQuiz" class="btn modern-btn w-10 me-1">Cancel</button>
+                    <button v-if="editQuizId !== quiz.id" @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
                       <i class="fas fa-trash me-1"></i>Delete
                     </button>
                   </td>
@@ -171,19 +199,26 @@
               </thead>
               <tbody>
                 <tr v-for="question in questions" :key="question.id">
-                  <td>{{question.question_statement}}</td>
-                  <td>
-                    <small>
-                      1: {{question.option1}}<br>
-                      2: {{question.option2}}<br>
-                      3: {{question.option3}}<br>
-                      4: {{question.option4}}
-                    </small>
-                  </td>
-                  <td>Option {{question.correct_answer}}</td>
-                  <td>
+                <td>{{question.question_statement}}</td>
+                <td>
+                  <small>
+                    1: {{question.option1}}<br>
+                    2: {{question.option2}}<br>
+                    3: {{question.option3}}<br>
+                    4: {{question.option4}}
+                  </small>
+                </td>
+                <td>Option {{question.correct_answer}}</td>
+                <td>
+                  <div v-if="editQuestionId !== question.id">
+                    <button @click="startEditQuestion(question)" class="btn modern-btn w-10 me-1">Edit</button>
                     <button @click="deleteQuestion(question.id)" class="btn modern-btn w-10">Delete</button>
-                  </td>
+                  </div>
+                  <div v-else>
+                    <button @click="updateQuestion(question.id)" class="btn modern-btn w-10 me-1">Save</button>
+                    <button @click="cancelEditQuestion" class="btn modern-btn w-10">Cancel</button>
+                  </div>
+                </td>
                 </tr>
               </tbody>
             </table>
@@ -238,7 +273,15 @@ export default {
       newQuestion: { question_statement: '', option1: '', option2: '', option3: '', option4: '', correct_answer: '' },
       searchSubject: '',
       searchChapter: '',
-      searchQuiz: ''
+      searchQuiz: '',
+      editSubjectId: null,
+      editSubjectData: { name: '', description: '' },
+      editChapterId: null,
+      editChapterData: { name: '', description: '', subject_id: '' },
+      editQuizId: null,
+      editQuizData: { chapter_id: '', date_of_quiz: '', time_duration: '', remarks: '' },
+      editQuestionId: null,
+      editQuestionData: { question_statement: '', option1: '', option2: '', option3: '', option4: '', correct_answer: '' },
     };
   },
   async mounted() {
@@ -246,7 +289,7 @@ export default {
     await this.loadUsers();
   },
   methods: {
-      async loadData() {
+    async loadData() {
         try {
           const [subjectsRes, chaptersRes, quizzesRes] = await Promise.all([
             fetch(`${API_BASE}/api/admin/subjects`, { credentials: 'include' }),
@@ -498,6 +541,117 @@ export default {
         }
       } catch (error) {
         alert('Failed to delete question');
+      }
+    },
+    startEditSubject(subject) {
+      this.editSubjectId = subject.id;
+      this.editSubjectData = { name: subject.name, description: subject.description };
+    },
+    cancelEditSubject() {
+      this.editSubjectId = null;
+      this.editSubjectData = { name: '', description: '' };
+    },
+    async updateSubject(subjectId) {
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/subjects/${subjectId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(this.editSubjectData)
+        });
+        if (response.ok) {
+          this.cancelEditSubject();
+          await this.loadData();
+        } else {
+          alert('Failed to update subject');
+        }
+      } catch (error) {
+        alert('Failed to update subject');
+      }
+    },
+    startEditChapter(chapter) {
+      this.editChapterId = chapter.id;
+      this.editChapterData = { name: chapter.name, description: chapter.description, subject_id: chapter.subject_id };
+    },
+    cancelEditChapter() {
+      this.editChapterId = null;
+      this.editChapterData = { name: '', description: '', subject_id: '' };
+    },
+    async updateChapter(chapterId) {
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/chapters/${chapterId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(this.editChapterData)
+        });
+        if (response.ok) {
+          this.cancelEditChapter();
+          await this.loadData();
+        } else {
+          alert('Failed to update chapter');
+        }
+      } catch (error) {
+        alert('Failed to update chapter');
+      }
+    },
+    startEditQuiz(quiz) {
+      this.editQuizId = quiz.id;
+      this.editQuizData = { chapter_id: quiz.chapter_id, date_of_quiz: quiz.date_of_quiz, time_duration: quiz.time_duration, remarks: quiz.remarks };
+    },
+    cancelEditQuiz() {
+      this.editQuizId = null;
+      this.editQuizData = { chapter_id: '', date_of_quiz: '', time_duration: '', remarks: '' };
+    },
+    async updateQuiz(quizId) {
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/quizzes/${quizId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(this.editQuizData)
+        });
+        if (response.ok) {
+          this.cancelEditQuiz();
+          await this.loadData();
+        } else {
+          alert('Failed to update quiz');
+        }
+      } catch (error) {
+        alert('Failed to update quiz');
+      }
+    },
+    startEditQuestion(question) {
+      this.editQuestionId = question.id;
+      this.editQuestionData = {
+        question_statement: question.question_statement,
+        option1: question.option1,
+        option2: question.option2,
+        option3: question.option3,
+        option4: question.option4,
+        correct_answer: question.correct_answer
+      };
+    },
+    cancelEditQuestion() {
+      this.editQuestionId = null;
+      this.editQuestionData = { question_statement: '', option1: '', option2: '', option3: '', option4: '', correct_answer: '' };
+    },
+    async updateQuestion(questionId) {
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/questions/${questionId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(this.editQuestionData)
+        });
+        if (response.ok) {
+          this.cancelEditQuestion();
+          await this.manageQuestions(this.selectedQuizId);
+        } else {
+          alert('Failed to update question');
+        }
+      } catch (error) {
+        alert('Failed to update question');
       }
     },
     logout() {

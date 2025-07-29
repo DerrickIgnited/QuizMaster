@@ -147,45 +147,95 @@ def manage_questions(quiz_id):
     conn.close()
     return jsonify(questions)
 
-@admin_bp.route('/subjects/<int:subject_id>', methods=['DELETE'])
+@admin_bp.route('/subjects/<int:subject_id>', methods=['DELETE', 'PUT'])
 @admin_required
-def delete_subject(subject_id):
+def delete_or_update_subject(subject_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('DELETE FROM subjects WHERE id = ?', (subject_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'success': True})
+    if request.method == 'DELETE':
+        c.execute('DELETE FROM subjects WHERE id = ?', (subject_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True})
+    elif request.method == 'PUT':
+        data = request.json
+        try:
+            c.execute('UPDATE subjects SET name = ?, description = ? WHERE id = ?',
+                      (data.get('name'), data.get('description'), subject_id))
+            conn.commit()
+            conn.close()
+            redis_client.delete('subjects_list')
+            return jsonify({'success': True})
+        except Exception as e:
+            conn.close()
+            return jsonify({'success': False, 'error': str(e)}), 400
 
-@admin_bp.route('/chapters/<int:chapter_id>', methods=['DELETE'])
+@admin_bp.route('/chapters/<int:chapter_id>', methods=['DELETE', 'PUT'])
 @admin_required
-def delete_chapter(chapter_id):
+def delete_or_update_chapter(chapter_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('DELETE FROM chapters WHERE id = ?', (chapter_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'success': True})
+    if request.method == 'DELETE':
+        c.execute('DELETE FROM chapters WHERE id = ?', (chapter_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True})
+    elif request.method == 'PUT':
+        data = request.json
+        try:
+            c.execute('UPDATE chapters SET name = ?, description = ?, subject_id = ? WHERE id = ?',
+                      (data.get('name'), data.get('description'), data.get('subject_id'), chapter_id))
+            conn.commit()
+            conn.close()
+            redis_client.delete(f'chapters_subject_{data.get("subject_id")}')
+            return jsonify({'success': True})
+        except Exception as e:
+            conn.close()
+            return jsonify({'success': False, 'error': str(e)}), 400
 
-@admin_bp.route('/quizzes/<int:quiz_id>', methods=['DELETE'])
+@admin_bp.route('/quizzes/<int:quiz_id>', methods=['DELETE', 'PUT'])
 @admin_required
-def delete_quiz(quiz_id):
+def delete_or_update_quiz(quiz_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('DELETE FROM quizzes WHERE id = ?', (quiz_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'success': True})
+    if request.method == 'DELETE':
+        c.execute('DELETE FROM quizzes WHERE id = ?', (quiz_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True})
+    elif request.method == 'PUT':
+        data = request.json
+        try:
+            c.execute('UPDATE quizzes SET chapter_id = ?, date_of_quiz = ?, time_duration = ?, remarks = ? WHERE id = ?',
+                      (data.get('chapter_id'), data.get('date_of_quiz'), data.get('time_duration'), data.get('remarks'), quiz_id))
+            conn.commit()
+            conn.close()
+            return jsonify({'success': True})
+        except Exception as e:
+            conn.close()
+            return jsonify({'success': False, 'error': str(e)}), 400
 
-@admin_bp.route('/questions/<int:question_id>', methods=['DELETE'])
+@admin_bp.route('/questions/<int:question_id>', methods=['DELETE', 'PUT'])
 @admin_required
-def delete_question(question_id):
+def delete_or_update_question(question_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('DELETE FROM questions WHERE id = ?', (question_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'success': True})
+    if request.method == 'DELETE':
+        c.execute('DELETE FROM questions WHERE id = ?', (question_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True})
+    elif request.method == 'PUT':
+        data = request.json
+        try:
+            c.execute('''UPDATE questions SET question_statement = ?, option1 = ?, option2 = ?, option3 = ?, option4 = ?, correct_answer = ? WHERE id = ?''',
+                      (data.get('question_statement'), data.get('option1'), data.get('option2'), data.get('option3'), data.get('option4'), data.get('correct_answer'), question_id))
+            conn.commit()
+            conn.close()
+            return jsonify({'success': True})
+        except Exception as e:
+            conn.close()
+            return jsonify({'success': False, 'error': str(e)}), 400
 
 @admin_bp.route('/trigger-reminders', methods=['POST'])
 @admin_required
