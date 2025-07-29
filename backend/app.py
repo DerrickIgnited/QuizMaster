@@ -92,8 +92,8 @@ def init_db():
     
     # Create admin user
     admin_password = generate_password_hash('admin123')
-    c.execute('INSERT OR IGNORE INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)',
-              ('admin@quiz.com', admin_password, 'Quiz Master Admin', 'admin'))
+    c.execute('INSERT OR IGNORE INTO users (username, password, qualification, full_name, dob, role) VALUES (?, ?, ?, ?, ?, ?)',
+              ('admin@quiz.com', admin_password, 'Teacher', 'Quiz Master Admin', '08-08-2005', 'admin'))
     
     conn.commit()
     conn.close()
