@@ -148,12 +148,23 @@
                     <button @click="manageQuestions(quiz.id)" class="btn modern-btn w-10 me-1">
                       Questions
                     </button>
-                    <button v-if="editQuizId !== quiz.id" @click="startEditQuiz(quiz)" class="btn modern-btn w-10 me-1">Edit</button>
-                    <button v-else @click="updateQuiz(quiz.id)" class="btn modern-btn w-10 me-1">Save</button>
-                    <button v-if="editQuizId === quiz.id" @click="cancelEditQuiz" class="btn modern-btn w-10 me-1">Cancel</button>
-                    <button v-if="editQuizId !== quiz.id" @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
-                      <i class="fas fa-trash me-1"></i>Delete
-                    </button>
+                    <div v-if="editQuizId !== quiz.id">
+                      <button @click="startEditQuiz(quiz)" class="btn modern-btn w-10 me-1">Edit</button>
+                      <button @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
+                        <i class="fas fa-trash me-1"></i>Delete
+                      </button>
+                    </div>
+                    <div v-else>
+                      <select v-model="editQuizData.chapter_id" class="form-control bg-transparent border-white text-white mb-2" required>
+                        <option value="">Select Chapter</option>
+                        <option v-for="chapter in chapters" :value="chapter.id" :key="chapter.id">{{ chapter.name }}</option>
+                      </select>
+                      <input v-model="editQuizData.date_of_quiz" type="date" class="form-control bg-transparent border-white text-white mb-2" required />
+                      <input v-model="editQuizData.time_duration" type="number" class="form-control bg-transparent border-white text-white mb-2" placeholder="Duration (minutes)" required />
+                      <textarea v-model="editQuizData.remarks" class="form-control bg-transparent border-white text-white mb-3" placeholder="Remarks"></textarea>
+                      <button @click="updateQuiz(quiz.id)" class="btn modern-btn w-10 me-1">Save</button>
+                      <button @click="cancelEditQuiz" class="btn modern-btn w-10 me-1">Cancel</button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -209,16 +220,37 @@
                   </small>
                 </td>
                 <td>Option {{question.correct_answer}}</td>
-                <td>
-                  <div v-if="editQuestionId !== question.id">
-                    <button @click="startEditQuestion(question)" class="btn modern-btn w-10 me-1">Edit</button>
-                    <button @click="deleteQuestion(question.id)" class="btn modern-btn w-10">Delete</button>
-                  </div>
-                  <div v-else>
-                    <button @click="updateQuestion(question.id)" class="btn modern-btn w-10 me-1">Save</button>
-                    <button @click="cancelEditQuestion" class="btn modern-btn w-10">Cancel</button>
-                  </div>
-                </td>
+                  <td>
+                    <div v-if="editQuestionId !== question.id">
+                      {{ question.question_statement }}
+                      <div>
+                        <button @click="startEditQuestion(question)" class="btn modern-btn w-10 me-1">Edit</button>
+                        <button @click="deleteQuestion(question.id)" class="btn modern-btn w-10">Delete</button>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <textarea v-model="editQuestionData.question_statement" class="form-control bg-transparent border-white text-white mb-2" required></textarea>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <input v-model="editQuestionData.option1" class="form-control bg-transparent border-white text-white mb-2" placeholder="Option 1" required />
+                          <input v-model="editQuestionData.option2" class="form-control bg-transparent border-white text-white mb-2" placeholder="Option 2" required />
+                        </div>
+                        <div class="col-md-6">
+                          <input v-model="editQuestionData.option3" class="form-control bg-transparent border-white text-white mb-2" placeholder="Option 3" required />
+                          <input v-model="editQuestionData.option4" class="form-control bg-transparent border-white text-white mb-2" placeholder="Option 4" required />
+                        </div>
+                      </div>
+                      <select v-model="editQuestionData.correct_answer" class="form-control bg-transparent border-white text-white mb-3" required>
+                        <option value="">Select Correct Answer</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                        <option value="3">Option 3</option>
+                        <option value="4">Option 4</option>
+                      </select>
+                      <button @click="updateQuestion(question.id)" class="btn modern-btn w-10 me-1">Save</button>
+                      <button @click="cancelEditQuestion" class="btn modern-btn w-10">Cancel</button>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
