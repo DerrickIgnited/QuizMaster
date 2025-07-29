@@ -55,8 +55,10 @@
           </div>
           <div>
             <button v-if="editSubjectId !== subject.id" @click="startEditSubject(subject)" class="btn modern-btn w-10 me-1">Edit</button>
-            <button v-else @click="updateSubject(subject.id)" class="btn modern-btn w-10 me-1">Save</button>
-            <button v-if="editSubjectId === subject.id" @click="cancelEditSubject" class="btn modern-btn w-10 me-1">Cancel</button>
+            <div v-if="editSubjectId === subject.id" class="d-flex align-items-center">
+              <button @click="updateSubject(subject.id)" class="btn modern-btn w-10 me-1">Save</button>
+              <button @click="cancelEditSubject" class="btn modern-btn w-10 me-1">Cancel</button>
+            </div>
             <button v-if="editSubjectId !== subject.id" @click="deleteSubject(subject.id)" class="btn modern-btn w-10">Delete</button>
           </div>
         </li>
@@ -92,8 +94,10 @@
           </div>
           <div>
             <button v-if="editChapterId !== chapter.id" @click="startEditChapter(chapter)" class="btn modern-btn w-10 me-1">Edit</button>
-            <button v-else @click="updateChapter(chapter.id)" class="btn modern-btn w-10 me-1">Save</button>
-            <button v-if="editChapterId === chapter.id" @click="cancelEditChapter" class="btn modern-btn w-10 me-1">Cancel</button>
+            <div v-if="editChapterId === chapter.id" class="d-flex align-items-center">
+              <button @click="updateChapter(chapter.id)" class="btn modern-btn w-10 me-1">Save</button>
+              <button @click="cancelEditChapter" class="btn modern-btn w-10 me-1">Cancel</button>
+            </div>
             <button v-if="editChapterId !== chapter.id" @click="deleteChapter(chapter.id)" class="btn modern-btn w-10">Delete</button>
           </div>
         </li>
@@ -144,28 +148,28 @@
                   <td>{{quiz.chapter_name}}</td>
                   <td>{{quiz.date_of_quiz}}</td>
                   <td>{{quiz.time_duration}} min</td>
-                  <td>
-                    <button @click="manageQuestions(quiz.id)" class="btn modern-btn w-10 me-1">
-                      Questions
-                    </button>
-                    <div v-if="editQuizId !== quiz.id">
-                      <button @click="startEditQuiz(quiz)" class="btn modern-btn w-10 me-1">Edit</button>
-                      <button @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
-                        <i class="fas fa-trash me-1"></i>Delete
-                      </button>
-                    </div>
-                    <div v-else>
-                      <select v-model="editQuizData.chapter_id" class="form-control bg-transparent border-white text-white mb-2" required>
-                        <option value="">Select Chapter</option>
-                        <option v-for="chapter in chapters" :value="chapter.id" :key="chapter.id">{{ chapter.name }}</option>
-                      </select>
-                      <input v-model="editQuizData.date_of_quiz" type="date" class="form-control bg-transparent border-white text-white mb-2" required />
-                      <input v-model="editQuizData.time_duration" type="number" class="form-control bg-transparent border-white text-white mb-2" placeholder="Duration (minutes)" required />
-                      <textarea v-model="editQuizData.remarks" class="form-control bg-transparent border-white text-white mb-3" placeholder="Remarks"></textarea>
-                      <button @click="updateQuiz(quiz.id)" class="btn modern-btn w-10 me-1">Save</button>
-                      <button @click="cancelEditQuiz" class="btn modern-btn w-10 me-1">Cancel</button>
-                    </div>
-                  </td>
+<td>
+  <div v-if="editQuizId !== quiz.id" class="d-flex align-items-center">
+    <button @click="manageQuestions(quiz.id)" class="btn modern-btn w-10 me-1">
+      Questions
+    </button>
+    <button @click="startEditQuiz(quiz)" class="btn modern-btn w-10 me-1">Edit</button>
+    <button @click="deleteQuiz(quiz.id)" class="btn modern-btn w-10">
+      <i class="fas fa-trash me-1"></i>Delete
+    </button>
+  </div>
+  <div v-else>
+    <select v-model="editQuizData.chapter_id" class="form-control bg-transparent border-white text-white mb-2" required>
+      <option value="">Select Chapter</option>
+      <option v-for="chapter in chapters" :value="chapter.id" :key="chapter.id">{{ chapter.name }}</option>
+    </select>
+    <input v-model="editQuizData.date_of_quiz" type="date" class="form-control bg-transparent border-white text-white mb-2" required />
+    <input v-model="editQuizData.time_duration" type="number" class="form-control bg-transparent border-white text-white mb-2" placeholder="Duration (minutes)" required />
+    <textarea v-model="editQuizData.remarks" class="form-control bg-transparent border-white text-white mb-3" placeholder="Remarks"></textarea>
+    <button @click="updateQuiz(quiz.id)" class="btn modern-btn w-10 me-1">Save</button>
+    <button @click="cancelEditQuiz" class="btn modern-btn w-10 me-1">Cancel</button>
+  </div>
+</td>
                 </tr>
               </tbody>
             </table>
@@ -222,7 +226,6 @@
                 <td>Option {{question.correct_answer}}</td>
                   <td>
                     <div v-if="editQuestionId !== question.id">
-                      {{ question.question_statement }}
                       <div>
                         <button @click="startEditQuestion(question)" class="btn modern-btn w-10 me-1">Edit</button>
                         <button @click="deleteQuestion(question.id)" class="btn modern-btn w-10">Delete</button>
