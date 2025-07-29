@@ -179,7 +179,7 @@ nav.navbar {
 }
 
 .navbar-buttons {
-  margin-left: 70%;
+  margin-left: 65%;
 }
 
 .app-footer {
