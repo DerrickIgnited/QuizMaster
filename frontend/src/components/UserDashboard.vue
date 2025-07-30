@@ -66,7 +66,7 @@
                   </div>
                   <div v-for="score in recentScores" :key="score.id" class="d-flex justify-content-between mb-2">
                     <span class="text-white-50">{{score.chapter_name}}</span>
-                    <span class="text-white fw-bold">{{score.total_scored}}</span>
+                    <span class="text-white fw-bold">{{ Math.round(score.total_scored * 100) }}%</span>
                   </div>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export default defineComponent({
         chartInstance.destroy();
       }
       const labels = scores.value.map((score, index) => score.chapter_name + ' #' + (index + 1));
-      const dataPoints = scores.value.map(score => score.total_scored);
+      const dataPoints = scores.value.map(score => score.total_scored * 100);
 
       chartInstance = new Chart(chartRef.value, {
         type: 'line',
@@ -192,6 +192,7 @@ export default defineComponent({
             },
             y: {
               beginAtZero: true,
+              max: 100,
               ticks: {
                 color: 'white'
               },

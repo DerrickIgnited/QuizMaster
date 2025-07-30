@@ -74,11 +74,11 @@
           <div v-else class="text-center">
             <i class="fas fa-trophy fa-4x text-warning mb-4"></i>
             <h2 class="text-white mb-3">Quiz Completed!</h2>
-            <h4 class="text-white mb-4">Your Score: {{result.score}} / {{result.total_questions}}</h4>
+            <h4 class="text-white mb-4">Your Score: {{safeScore}} / {{result.total_questions || 0}}</h4>
             <div class="mb-4">
               <div class="progress" style="height: 20px;">
-                <div class="progress-bar bg-success" :style="{width: (result.score / result.total_questions * 100) + '%'}">
-                  {{Math.round(result.score / result.total_questions * 100)}}%
+                <div class="progress-bar bg-success" :style="{width: safePercentage + '%'}">
+                  {{safePercentage}}%
                 </div>
               </div>
             </div>
@@ -106,6 +106,20 @@ export default {
       showResults: false,
       result: {}
     };
+  },
+  computed: {
+    safeScore() {
+      if (this.result && typeof this.result.score === 'number' && typeof this.result.total_questions === 'number') {
+        return Math.round(this.result.score * this.result.total_questions);
+      }
+      return 0;
+    },
+    safePercentage() {
+      if (this.result && typeof this.result.score === 'number') {
+        return Math.round(this.result.score * 100);
+      }
+      return 0;
+    }
   },
   mounted() {
     this.loadQuiz();

@@ -137,6 +137,7 @@
                 <tr>
                   <th>Subject</th>
                   <th>Chapter</th>
+                  <th>Name</th>
                   <th>Date</th>
                   <th>Duration</th>
                   <th>Actions</th>
@@ -146,6 +147,7 @@
                 <tr v-for="quiz in filteredQuizzes" :key="quiz.id">
                   <td>{{quiz.subject_name}}</td>
                   <td>{{quiz.chapter_name}}</td>
+                  <td>{{quiz.remarks}}</td>
                   <td>{{quiz.date_of_quiz}}</td>
                   <td>{{quiz.time_duration}} min</td>
 <td>
