@@ -9,14 +9,13 @@ chatbot_bp = Blueprint('chatbot', __name__)
 def create_prompt(user_message):
     prompt = f"""
 You are Quiz Master AI assistant. Help the user with quiz-related questions and provide clear, concise answers.
-Respond in markdown format to allow rich text formatting.
+Respond in markdown format to allow rich text formatting strictly.
 User: {user_message}
 AI:
 """
     return prompt
 
 @chatbot_bp.route('/chat', methods=['POST'])
-@cache_response('chatbot_chat', timeout=60)
 def chat():
     data = request.json
     user_message = data.get('message', '')

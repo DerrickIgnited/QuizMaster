@@ -129,10 +129,10 @@ export default {
           color: 'info'
         },
         {
-          title: 'Compete with Friends',
-          desc: 'Challenge your friends and climb the leaderboard.',
-          icon: 'fas fa-user-friends',
-          color: 'warning'
+          title: 'AI Chat Bot',
+          desc: 'Get instant help and quiz tips from our intelligent AI chat bot.',
+          icon: 'fas fa-robot',
+          color: 'primary'
         },
         {
           title: 'Admin Dashboard',
