@@ -260,6 +260,7 @@
           </div>
         </div>
       </div>
+      <br>
 
       <div class="glass-card p-4 mb-4" style="width: 51.3%;margin-left: 24.4%;">
         <h5 class="text-white mb-3"><i class="fas fa-users me-2"></i>Users and Average Scores</h5>
