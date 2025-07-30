@@ -29,6 +29,6 @@ echo "Port 5173 usage:"
 lsof -i :5173
 
 echo "Deleting Celery schedule database..."
-rm -rf backend/new-schedule.db*
+rm -rf new-schedule.db*
 
 echo "Cleanup complete."
